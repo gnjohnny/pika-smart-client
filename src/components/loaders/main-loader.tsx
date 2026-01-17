@@ -11,9 +11,17 @@ const CustomLoader = ({ size = 48, color = "#4F46E5" }) => {
   `;
 
   return (
-    <div style={{ width: size, height: size, display: "inline-block" }}>
+    <div
+      role="status"
+      aria-live="polite"
+      aria-label="Loading"
+      aria-busy="true"
+      style={{ width: size, height: size, display: "inline-block" }}
+    >
       <style>{styles}</style>
       <svg
+        aria-hidden="true"
+        focusable="false"
         viewBox="0 0 100 100"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
