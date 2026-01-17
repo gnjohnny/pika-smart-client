@@ -1,10 +1,10 @@
-import { ModeToggle } from "./components/theme-mode-toggle";
+import { Route, Routes } from "react-router";
 
 const App = () => {
   return (
-    <div className="w-full h-full flex justify-center items-center">
-      <ModeToggle />
-    </div>
+    <Routes>
+      <Route path="/" element={<div>Welcome to the App!</div>} />
+    </Routes>
   );
 };
 
