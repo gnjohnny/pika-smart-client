@@ -62,7 +62,7 @@ const Footer = () => {
               <input
                 type="email"
                 placeholder="Enter email"
-                className="bg-gray-50 px-4 py-3 rounded-l-lg outline-none w-full border border-gray-200 focus:border-orange-500 placeholder: text-primary/80"
+                className="bg-gray-50 px-4 py-3 rounded-l-lg outline-none w-full border border-gray-200 focus:border-orange-500 placeholder:text-primary/80"
               />
               <button className="bg-orange-500 hover:bg-orange-600 text-white px-4 rounded-r-lg transition-colors">
                 <ArrowRight className="w-5 h-5" />
