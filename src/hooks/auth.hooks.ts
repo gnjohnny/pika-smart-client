@@ -12,7 +12,6 @@ export const useAuth = () => {
         queryKey: ["auth_user"],
         queryFn: getAuthUser,
     });
-
     return {
         authUser: data,
         isPending,

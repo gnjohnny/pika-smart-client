@@ -1,3 +1,4 @@
+import type { FieldValues } from "react-hook-form";
 import {
     FormControl,
     FormField,
@@ -8,16 +9,16 @@ import {
 import { Input } from "../ui/input";
 import { PasswordInput } from "../ui/password-input";
 
-const FormFieldInput = ({
+const FormFieldInput = <T extends FieldValues>({
     control,
     name,
     placeholder,
     text,
-}: FormFieldInputProps) => {
+}: FormFieldInputProps<T>) => {
     const inputType =
         name === "email"
             ? "email"
-            :  name === "password"
+            :  name === "password" || name === "confirmPassword"
             ? "password"
             : "text";
     return (
@@ -28,7 +29,7 @@ const FormFieldInput = ({
                 <FormItem className="space-y-0.5">
                     <FormLabel className="">{text}</FormLabel>
                     <FormControl>
-                        {name === "password" ? (
+                        {name === "password" || name === "confirmPassword" ? (
                             <PasswordInput
                                 {...field}
                                 placeholder={placeholder}
