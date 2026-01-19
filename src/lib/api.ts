@@ -2,7 +2,8 @@ import { axiosInstance } from "@/config/axios.config";
 
 export const getAuthUser = async () => {
     try {
-        const res = await axiosInstance.get("/auth/user");
+        const res = await axiosInstance.get("/auth/me");
+        console.log(res.data)
         return res.data;
     } catch (err: any) {
         console.log("error:", err);
@@ -11,10 +12,8 @@ export const getAuthUser = async () => {
 };
 
 export const SignUp = async (data: {
-    name: string;
     email: string;
     password: string;
-    phone: string;
 }) => {
     try {
         const res = await axiosInstance.post("/auth/sign-up", data);
