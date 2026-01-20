@@ -1,57 +1,71 @@
-import { axiosInstance } from "@/config/axios.config";
+import { axiosInstance } from '@/config/axios.config';
 
 export const getAuthUser = async () => {
-    try {
-        const res = await axiosInstance.get("/auth/me");
-        console.log(res.data)
-        return res.data;
-    } catch (err: any) {
-        console.log("error:", err);
-        return null;
-    }
+  try {
+    const res = await axiosInstance.get('/auth/me');
+    console.log(res.data);
+    return res.data;
+  } catch (err: any) {
+    console.log('error:', err);
+    return null;
+  }
 };
 
-export const SignUp = async (data: {
-    email: string;
-    password: string;
-}) => {
-    try {
-        const res = await axiosInstance.post("/auth/sign-up", data);
-        return res.data;
-    } catch (err: any) {
-        const message =
-            err.response?.data?.message ||
-            err.message ||
-            "Signin failed. Please try again.";
+export const SignUp = async (data: { email: string; password: string }) => {
+  try {
+    const res = await axiosInstance.post('/auth/sign-up', data);
+    return res.data;
+  } catch (err: any) {
+    const message =
+      err.response?.data?.message ||
+      err.message ||
+      'Signin failed. Please try again.';
 
-        throw new Error(message);
-    }
+    throw new Error(message);
+  }
 };
 
 export const SignIn = async (data: { email: string; password: string }) => {
-    try {
-        const res = await axiosInstance.post("/auth/sign-in", data);
-        return res.data;
-    } catch (err: any) {
-        const message =
-            err.response?.data?.message ||
-            err.message ||
-            "Signin failed. Please try again.";
+  try {
+    const res = await axiosInstance.post('/auth/sign-in', data);
+    return res.data;
+  } catch (err: any) {
+    const message =
+      err.response?.data?.message ||
+      err.message ||
+      'Signin failed. Please try again.';
 
-        throw new Error(message);
-    }
+    throw new Error(message);
+  }
 };
 
 export const SignOut = async () => {
-    try {
-        const res = await axiosInstance.post("/auth/sign-out");
-        return res.data;
-    } catch (err: any) {
-        const message =
-            err.response?.data?.message ||
-            err.message ||
-            "Something went wrong. Please try again.";
+  try {
+    const res = await axiosInstance.post('/auth/sign-out');
+    return res.data;
+  } catch (err: any) {
+    const message =
+      err.response?.data?.message ||
+      err.message ||
+      'Something went wrong. Please try again.';
 
-        throw new Error(message);
+    throw new Error(message);
+  }
+};
+
+export const generatePasswordResetLink = async (
+    data: {
+        email: string;
     }
+) => {
+  try {
+    const res = await axiosInstance.post('/request-password-reset-link', { data });
+    return res.data;
+  } catch (err: any) {
+    const message =
+      err.response?.data?.message ||
+      err.message ||
+      'Error generating password reset link';
+    throw new Error(message);
+  }
 };
