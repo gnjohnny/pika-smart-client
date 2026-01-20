@@ -11,36 +11,39 @@ import {
 import { Form } from "@/components/ui/form";
 import { LoadingSwap } from "@/components/ui/loading-swap";
 import { Separator } from "@/components/ui/separator";
-import { useSignIn } from "@/hooks/auth.hooks";
-import { signInSchema } from "@/schemas/schema";
+import { useResetPassword } from "@/hooks/auth.hooks";
+import { resetPasswordLinkSchema } from "@/schemas/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { toast } from "sonner";
+const ResetPasswordPage = () => {
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("_token");
 
-const SignInPage = () => {
-  const form = useForm<SignInFormData>({
-    resolver: zodResolver(signInSchema),
+  const form = useForm<ResetPasswordLinkFormData>({
+    resolver: zodResolver(resetPasswordLinkSchema),
     defaultValues: {
-      email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
-  const { signIn, reset } = useSignIn();
+  const { resetPasswordMutation, reset } = useResetPassword();
   const { isSubmitting } = form.formState;
 
-  const handleSignIn = async (data: SignInFormData) => {
+  const handleResetPassword = async (data: ResetPasswordLinkFormData) => {
     reset();
     try {
-      const res = await signIn(data);
+      const res = await resetPasswordMutation({
+        newPassword: data.confirmPassword,
+        token: token as string,
+      });
       if (res.success) {
         toast.success(res.message);
-      } else {
-        toast.error(res.message);
       }
     } catch (error: any) {
-      toast.error(error.message || "Something went wrong");
+      toast.error(error.message);
     }
   };
   return (
@@ -56,26 +59,18 @@ const SignInPage = () => {
                 height={50}
               />
             </div>
-            <CardTitle className="text-2xl">Sign In</CardTitle>
+            <CardTitle className="text-2xl">Reset your Password</CardTitle>
             <CardDescription className="text-sm">
-              Welcome back! Please enter your details to sign in to your account
-              continue getting more from pika smart
+              Enter your new preferred password
             </CardDescription>
           </CardHeader>
           <Separator />
           <CardContent>
             <Form {...form}>
               <form
-                onSubmit={form.handleSubmit(handleSignIn)}
+                onSubmit={form.handleSubmit(handleResetPassword)}
                 className="space-y-4"
               >
-                {/* email input */}
-                <FormFieldInput
-                  control={form.control}
-                  name="email"
-                  placeholder="john@example.com"
-                  text="Email"
-                />
                 {/* password input */}
                 <FormFieldInput
                   control={form.control}
@@ -83,16 +78,12 @@ const SignInPage = () => {
                   placeholder="******"
                   text="Password"
                 />
-
-                <p className="text-sm">
-                  Don't remember your password?{"  "}
-                  <Link
-                    to={"/generate-password-reset-link"}
-                    className="underline"
-                  >
-                    Forgot Password
-                  </Link>
-                </p>
+                <FormFieldInput
+                  control={form.control}
+                  name="confirmPassword"
+                  placeholder="******"
+                  text="Confirm Password"
+                />
 
                 <Button
                   type="submit"
@@ -103,7 +94,7 @@ const SignInPage = () => {
                     isLoading={isSubmitting}
                     className="text-white font-bold"
                   >
-                    Sign In
+                    Reset Password
                   </LoadingSwap>
                 </Button>
               </form>
@@ -112,9 +103,9 @@ const SignInPage = () => {
           <Separator />
           <CardFooter className="flex justify-center items-center">
             <p className="text-sm">
-              Don't have an account?{"  "}
-              <Link to={"/sign-up"} className="underline">
-                Sign Up
+              Remember your password?
+              <Link to="/sign-in" className="underline">
+                Sign in
               </Link>
             </p>
           </CardFooter>
@@ -124,4 +115,4 @@ const SignInPage = () => {
   );
 };
 
-export default SignInPage;
+export default ResetPasswordPage;

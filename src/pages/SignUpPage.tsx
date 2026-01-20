@@ -28,24 +28,24 @@ const SignUpPage = () => {
     },
   });
 
-  const {signUp, reset} = useSignUp();
+  const { signUp, reset } = useSignUp();
   const { isSubmitting } = form.formState;
 
   const handleSignUp = async (data: SignUpFormData) => {
-    reset()
-    try{
-        const res = await signUp({
-            email: data.email,
-            password: data.confirmPassword
-        })
+    reset();
+    try {
+      const res = await signUp({
+        email: data.email,
+        password: data.confirmPassword,
+      });
 
-        if(res.success){
-            toast.success(res.message)
-        }else{
-            toast.error(res.message)
-        }
-    }catch(err: any){
-        toast.error(err.message || "Something went wrong")
+      if (res.success) {
+        toast.success(res.message);
+      } else {
+        toast.error(res.message);
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Something went wrong");
     }
   };
   return (
@@ -67,6 +67,8 @@ const SignUpPage = () => {
               you'll be able to save recipes
             </CardDescription>
           </CardHeader>
+          <Separator />
+
           <CardContent>
             <Form {...form}>
               <form
@@ -112,13 +114,12 @@ const SignUpPage = () => {
           <Separator />
           <CardFooter className="flex justify-center items-center">
             <p className="text-sm">
-             Already have an account?{"  "}
+              Already have an account?{"  "}
               <Link to={"/sign-in"} className="underline">
                 Sign In
               </Link>
             </p>
           </CardFooter>
-          <Separator />
         </Card>
       </div>
     </div>

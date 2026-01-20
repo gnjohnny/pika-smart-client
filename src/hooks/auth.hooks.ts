@@ -1,95 +1,111 @@
 import {
-    generatePasswordResetLink,
-    getAuthUser,
-    SignIn,
-    SignOut,
-    SignUp,
+  generatePasswordResetLink,
+  getAuthUser,
+  resetPassword,
+  SignIn,
+  SignOut,
+  SignUp,
 } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router";
 
 export const useAuth = () => {
-    const { data, isPending, error } = useQuery({
-        queryKey: ["auth_user"],
-        queryFn: getAuthUser,
-    });
-    return {
-        authUser: data,
-        isPending,
-        error,
-    };
+  const { data, isPending, error } = useQuery({
+    queryKey: ["auth_user"],
+    queryFn: getAuthUser,
+  });
+  return {
+    authUser: data,
+    isPending,
+    error,
+  };
 };
 
 export const useSignIn = () => {
-    const queryClient = useQueryClient();
-    const location = useLocation();
-    const navigate = useNavigate();
-    const { data, error, isPending, mutateAsync, reset } = useMutation({
-        mutationFn: SignIn,
-        onSuccess: () => {
-            queryClient.refetchQueries({ queryKey: ["auth_user"] });
-            const from = location.state?.from || "/dashboard";
-            navigate(from, { replace: true });
-        },
-    });
+  const queryClient = useQueryClient();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { data, error, isPending, mutateAsync, reset } = useMutation({
+    mutationFn: SignIn,
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["auth_user"] });
+      const from = location.state?.from || "/dashboard";
+      navigate(from, { replace: true });
+    },
+  });
 
-    return {
-        signIn: mutateAsync,
-        signInData: data,
-        error,
-        isPending,
-        reset,
-    };
+  return {
+    signIn: mutateAsync,
+    signInData: data,
+    error,
+    isPending,
+    reset,
+  };
 };
 
 export const useSignUp = () => {
-    const queryClient = useQueryClient();
-    const { data, error, isPending, mutateAsync, reset } = useMutation({
-        mutationFn: SignUp,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["auth_user"] });
-        },
-    });
+  const queryClient = useQueryClient();
+  const { data, error, isPending, mutateAsync, reset } = useMutation({
+    mutationFn: SignUp,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["auth_user"] });
+    },
+  });
 
-    return {
-        signUp: mutateAsync,
-        signUpData: data,
-        error,
-        isPending,
-        reset,
-    };
+  return {
+    signUp: mutateAsync,
+    signUpData: data,
+    error,
+    isPending,
+    reset,
+  };
 };
 
 export const useSignOut = () => {
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-    const { mutateAsync, isPending, reset } = useMutation({
-        mutationFn: SignOut,
-        onSuccess: () => {
-            queryClient.setQueryData(["auth_user"], null);
-            queryClient.invalidateQueries({
-                queryKey: ["auth_user"],
-            });
-        },
-    });
+  const { mutateAsync, isPending, reset } = useMutation({
+    mutationFn: SignOut,
+    onSuccess: () => {
+      queryClient.setQueryData(["auth_user"], null);
+      queryClient.invalidateQueries({
+        queryKey: ["auth_user"],
+      });
+    },
+  });
 
-    return {
-        signOut: mutateAsync,
-        isPending,
-        reset,
-    };
+  return {
+    signOut: mutateAsync,
+    isPending,
+    reset,
+  };
 };
 
 export const useGeneratePasswordLink = () => {
-    const {data, error, isPending, mutateAsync, reset} = useMutation({
-        mutationFn: generatePasswordResetLink,
-    })
+  const { data, error, isPending, mutateAsync, reset } = useMutation({
+    mutationFn: generatePasswordResetLink,
+  });
 
-    return {
-        generatePasswordResetLinkMutation: mutateAsync,
-        generatePasswordResetLinkData: data,
-        error,
-        isPending,
-        reset,
-    }
-}
+  return {
+    generatePasswordResetLinkMutation: mutateAsync,
+    generatePasswordResetLinkData: data,
+    error,
+    isPending,
+    reset,
+  };
+};
+
+export const useResetPassword = () => {
+  const navigate = useNavigate();
+  const { mutateAsync, reset } = useMutation({
+    mutationFn: resetPassword,
+    onSuccess: () => {
+      navigate("/sign-in");
+    },
+  });
+
+  return {
+    resetPasswordMutation: mutateAsync,
+    reset,
+  };
+};
