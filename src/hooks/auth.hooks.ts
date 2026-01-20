@@ -1,4 +1,5 @@
 import {
+    generatePasswordResetLink,
     getAuthUser,
     SignIn,
     SignOut,
@@ -78,3 +79,17 @@ export const useSignOut = () => {
         reset,
     };
 };
+
+export const useGeneratePasswordLink = () => {
+    const {data, error, isPending, mutateAsync, reset} = useMutation({
+        mutationFn: generatePasswordResetLink,
+    })
+
+    return {
+        generatePasswordResetLinkMutation: mutateAsync,
+        generatePasswordResetLinkData: data,
+        error,
+        isPending,
+        reset,
+    }
+}
