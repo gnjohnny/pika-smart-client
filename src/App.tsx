@@ -8,6 +8,7 @@ import { useAuth } from "./hooks/auth.hooks";
 import CustomLoader from "./components/loaders/main-loader";
 import SignUpPage from "./pages/SignUpPage";
 import GeneratePassResetLinkPage from "./pages/GeneratePassResetLinkPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 const App = () => {
   const { authUser, isPending } = useAuth();
@@ -50,6 +51,16 @@ const App = () => {
         element={
           !authUser ? (
             <GeneratePassResetLinkPage />
+          ) : (
+            <Navigate to="/dashboard" replace />
+          )
+        }
+      />
+      <Route
+        path="/reset-password"
+        element={
+          !authUser ? (
+            <ResetPasswordPage />
           ) : (
             <Navigate to="/dashboard" replace />
           )
