@@ -6,7 +6,6 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router";
 import { ThemeProvider } from "./components/theme-provider.tsx";
 import { Toaster } from "./components/ui/sonner.tsx";
-import { SidebarProvider } from "./components/ui/sidebar.tsx";
 
 const queryClient = new QueryClient();
 
@@ -15,9 +14,7 @@ createRoot(document.getElementById("root")!).render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <ThemeProvider defaultTheme="system">
-          <SidebarProvider>
-            <App />
-          </SidebarProvider>
+          <App />
           <Toaster />
         </ThemeProvider>
       </BrowserRouter>
