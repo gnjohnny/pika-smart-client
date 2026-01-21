@@ -1,14 +1,19 @@
 import {
   CookingPot,
+  EllipsisVertical,
   FilePlus,
   LayoutDashboard,
+  LogOutIcon,
+  SettingsIcon,
   Star,
   Trash,
+  UserIcon,
 } from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -16,9 +21,20 @@ import {
 } from "@/components/ui/sidebar";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import { Link, useLocation } from "react-router";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { useAuth, useSignOut } from "@/hooks/auth.hooks";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { toast } from "sonner";
+import { extractNameFromEmail } from "@/helpers/helpers";
 
 // Menu items.
-const items = [
+const items: ItemsLinkType[] = [
   {
     title: "Dashboard",
     url: "/dashboard",
@@ -50,6 +66,22 @@ export function AppSidebar() {
   const location = useLocation();
 
   const pathname = location.pathname;
+
+  const { authUser } = useAuth();
+  const { reset, signOut } = useSignOut();
+
+  const handleSignOut = async () => {
+    reset();
+    try {
+      const res = await signOut();
+      if (res.success) {
+        toast.success(res.message);
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -80,6 +112,45 @@ export function AppSidebar() {
           ))}
         </SidebarMenu>
       </SidebarContent>
+      <SidebarFooter>
+        <div className="w-full p-1 border border-primary/30 shadow-sm shadow-primary/40 rounded-md flex items-center relative">
+          <Avatar>
+            <AvatarImage src="https://github.com/shadcn.png" />
+            <AvatarFallback className="font-bold text-xl">
+              {extractNameFromEmail(authUser?.user.email).slice(0, 2)}
+            </AvatarFallback>
+          </Avatar>
+
+          <div className="flex items-start flex-col mx-2">
+            <p className="text-xl text-primary/90 font-bold">
+              {extractNameFromEmail(authUser?.user.email)}
+            </p>
+            <p className="text-xs text-primary/80">{authUser?.user.email}</p>
+          </div>
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 rounded-r-md h-full flex justify-center items-center cursor-pointer">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <EllipsisVertical />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>
+                  <UserIcon />
+                  Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <SettingsIcon />
+                  Settings
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem variant="destructive" onClick={handleSignOut}>
+                  <LogOutIcon />
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      </SidebarFooter>
     </Sidebar>
   );
 }

@@ -30,4 +30,9 @@ declare global {
     typeof generatePasswordResetLinkSchema
   >;
   type ResetPasswordLinkFormData = z.infer<typeof resetPasswordLinkSchema>;
+  type ItemsLinkType = {
+    title: string;
+    url: string;
+    icon: LucideIcon;
+  };
 }
