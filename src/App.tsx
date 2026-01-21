@@ -9,6 +9,7 @@ import CustomLoader from "./components/loaders/main-loader";
 import SignUpPage from "./pages/SignUpPage";
 import GeneratePassResetLinkPage from "./pages/GeneratePassResetLinkPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import DashBoardLayout from "./components/dashboard_components/dashboard-layout";
 
 const App = () => {
   const { authUser, isPending } = useAuth();
@@ -67,7 +68,14 @@ const App = () => {
         }
       />
       <Route element={<ProtectRoutes isAllowed={!!authUser} />}>
-        <Route path="/dashboard" element={<Dashboardpage />} />
+        <Route
+          path="/dashboard"
+          element={
+            <DashBoardLayout>
+              <Dashboardpage />
+            </DashBoardLayout>
+          }
+        />
       </Route>
     </Routes>
   );
