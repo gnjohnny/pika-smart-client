@@ -5,7 +5,7 @@ import type {
   signUpSchema,
 } from "@/schemas/schema";
 import type { Control, FieldPath, FieldValues } from "react-hook-form";
-import type z from "zod";
+import type { z } from "zod";
 
 export {};
 
