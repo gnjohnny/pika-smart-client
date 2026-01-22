@@ -130,7 +130,13 @@ export function AppSidebar() {
           <div className="absolute right-0 top-1/2 -translate-y-1/2 rounded-r-md h-full flex justify-center items-center cursor-pointer">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <EllipsisVertical />
+                <button
+                  type="button"
+                  aria-label="Open user menu"
+                  className="p-1"
+                >
+                  <EllipsisVertical />
+                </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem>
