@@ -45,9 +45,15 @@ const GeneratePassResetLinkPage = () => {
       if (res.success) {
         toast.success(res.message);
         setResetLink(res.resetpasswordLink);
+      } else {
+        toast.error(res.message ?? "Error generating password reset link");
       }
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Error generating password reset link";
+      toast.error(message);
     }
   };
 
@@ -60,13 +66,12 @@ const GeneratePassResetLinkPage = () => {
   };
 
   useEffect(() => {
-    if (isCopied) {
-      toast.success("Reset Link was copied successfully");
-      setTimeout(() => {
-        setIsCopied(false);
-      }, 500);
-    }
-  });
+    if (!isCopied) return;
+    toast.success("Reset Link was copied successfully");
+    const timer = setTimeout(() => setIsCopied(false), 500);
+    return () => clearTimeout(timer);
+  }, [isCopied]);
+
   return (
     <div className="w-full h-screen mx-auto flex justify-center items-center px-4">
       <div className="w-full md:w-3/4 lg:w-[38%] mx-auto">
@@ -85,7 +90,7 @@ const GeneratePassResetLinkPage = () => {
             </CardTitle>
             <CardDescription className="text-sm">
               Enter your email and Click the button below to generate a
-              passsword reset link. The Link will be generated and be provided
+              passsword reset link. The link will be generated and provided
               below.
             </CardDescription>
           </CardHeader>
@@ -155,7 +160,7 @@ const GeneratePassResetLinkPage = () => {
                 </Form>
                 <Separator />
                 <p className="text-sm text-center text-primary/40">
-                  Enter the your email above to generate a password reset link
+                  Enter your email above to generate a password reset link
                 </p>
               </div>
             )}

@@ -44,8 +44,10 @@ const SignUpPage = () => {
       } else {
         toast.error(res.message);
       }
-    } catch (err: any) {
-      toast.error(err.message || "Something went wrong");
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Something went wrong";
+      toast.error(message);
     }
   };
   return (

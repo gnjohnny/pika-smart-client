@@ -20,6 +20,7 @@ import { toast } from "sonner";
 const ResetPasswordPage = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("_token");
+  const hasToken = Boolean(token);
 
   const form = useForm<ResetPasswordLinkFormData>({
     resolver: zodResolver(resetPasswordLinkSchema),
@@ -33,6 +34,9 @@ const ResetPasswordPage = () => {
   const { isSubmitting } = form.formState;
 
   const handleResetPassword = async (data: ResetPasswordLinkFormData) => {
+    if (!token) {
+      toast.error("Invalid reset link");
+    }
     reset();
     try {
       const res = await resetPasswordMutation({
@@ -42,8 +46,10 @@ const ResetPasswordPage = () => {
       if (res.success) {
         toast.success(res.message);
       }
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Something went wrong";
+      toast.error(message);
     }
   };
   return (
@@ -87,7 +93,7 @@ const ResetPasswordPage = () => {
 
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !hasToken}
                   className="w-full bg-orange-600 hover:bg-orange-600/80 transition-colors duration-300 cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <LoadingSwap
