@@ -1,13 +1,14 @@
 import {
   CookingPot,
   EllipsisVertical,
-  FilePlus,
   LayoutDashboard,
   LogOutIcon,
+  Settings,
   SettingsIcon,
   Star,
   Trash,
   UserIcon,
+  WandSparkles,
 } from "lucide-react";
 
 import {
@@ -43,7 +44,7 @@ const items: ItemsLinkType[] = [
   {
     title: "Create",
     url: "/dashboard/create",
-    icon: FilePlus,
+    icon: WandSparkles,
   },
   {
     title: "Recipes",
@@ -60,6 +61,11 @@ const items: ItemsLinkType[] = [
     url: "/dashboard/trashed",
     icon: Trash,
   },
+  {
+    title: "Settings",
+    url: "/dashboard/settings",
+    icon: Settings,
+  },
 ];
 
 export function AppSidebar() {
@@ -69,7 +75,6 @@ export function AppSidebar() {
 
   const { authUser } = useAuth();
   const { reset, signOut } = useSignOut();
-
   const handleSignOut = async () => {
     reset();
     try {
@@ -115,7 +120,7 @@ export function AppSidebar() {
       <SidebarFooter>
         <div className="w-full p-1 border border-primary/30 shadow-sm shadow-primary/40 rounded-md flex items-center relative">
           <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" />
+            <AvatarImage src="https://api.dicebear.com/9.x/bottts/webp" />
             <AvatarFallback className="font-bold text-xl">
               {extractNameFromEmail(authUser?.user.email).slice(0, 2)}
             </AvatarFallback>
@@ -133,7 +138,7 @@ export function AppSidebar() {
                 <button
                   type="button"
                   aria-label="Open user menu"
-                  className="p-1"
+                  className="p-1 cursor-pointer"
                 >
                   <EllipsisVertical />
                 </button>
@@ -143,10 +148,12 @@ export function AppSidebar() {
                   <UserIcon />
                   Profile
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <SettingsIcon />
-                  Settings
-                </DropdownMenuItem>
+                <Link to={"/dashboard/settings"}>
+                  <DropdownMenuItem>
+                    <SettingsIcon />
+                    Settings
+                  </DropdownMenuItem>
+                </Link>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem variant="destructive" onClick={handleSignOut}>
                   <LogOutIcon />

@@ -4,6 +4,7 @@ import type {
   signInSchema,
   signUpSchema,
 } from "@/schemas/schema";
+import type { LucideIcon } from "lucide-react";
 import type { Control, FieldPath, FieldValues } from "react-hook-form";
 import type { z } from "zod";
 
@@ -34,5 +35,34 @@ declare global {
     title: string;
     url: string;
     icon: LucideIcon;
+  };
+  type StatItemsType = {
+    title: string;
+    icon: LucideIcon;
+    stat: number | null;
+    desc: string;
+  };
+
+  type QuickActionItemsType = {
+    title: string;
+    icon: LucideIcon;
+    desc: string;
+    url: string;
+  };
+  type Recipe = {
+    cook_time: number;
+    createdAt: Date;
+    description: string;
+    generated_by_AI: boolean;
+    ingredients: Array<{
+      name: string;
+      quantity: string;
+      unit: string;
+    }>;
+    instructions: Array<string>;
+    prep_time: number;
+    servings: number;
+    title: string;
+    _id: string;
   };
 }

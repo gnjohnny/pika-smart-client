@@ -10,6 +10,11 @@ import SignUpPage from "./pages/SignUpPage";
 import GeneratePassResetLinkPage from "./pages/GeneratePassResetLinkPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import DashBoardLayout from "./components/dashboard_components/dashboard-layout";
+import CreateRecipePage from "./pages/CreateRecipePage";
+import RecipesPage from "./pages/RecipesPage";
+import FavouriteRecipesPage from "./pages/FavouriteRecipesPage";
+import TrashedRecipesPage from "./pages/TrashedRecipesPage";
+import SettingsPage from "./pages/SettingsPage";
 
 const App = () => {
   const { authUser, isPending } = useAuth();
@@ -73,6 +78,46 @@ const App = () => {
           element={
             <DashBoardLayout>
               <Dashboardpage />
+            </DashBoardLayout>
+          }
+        />
+        <Route
+          path="/dashboard/create"
+          element={
+            <DashBoardLayout>
+              <CreateRecipePage />
+            </DashBoardLayout>
+          }
+        />
+        <Route
+          path="/dashboard/recipes"
+          element={
+            <DashBoardLayout>
+              <RecipesPage />
+            </DashBoardLayout>
+          }
+        />
+        <Route
+          path="/dashboard/favourites"
+          element={
+            <DashBoardLayout>
+              <FavouriteRecipesPage />
+            </DashBoardLayout>
+          }
+        />
+        <Route
+          path="/dashboard/trashed"
+          element={
+            <DashBoardLayout>
+              <TrashedRecipesPage />
+            </DashBoardLayout>
+          }
+        />
+        <Route
+          path="/dashboard/settings"
+          element={
+            <DashBoardLayout>
+              <SettingsPage />
             </DashBoardLayout>
           }
         />
