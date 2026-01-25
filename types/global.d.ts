@@ -64,5 +64,6 @@ declare global {
     servings: number;
     title: string;
     _id: string;
+    reason: string;
   };
 }

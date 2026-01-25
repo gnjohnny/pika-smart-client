@@ -167,7 +167,7 @@ const Dashboardpage = () => {
                   to={`/dashboard/recipe/${recipe._id}`}
                   key={recipe._id || idx}
                 >
-                  <Card className="mx-auto w-full md:max-w-sm hover:bg-primary/20 transition duration-200">
+                  <Card className="mx-auto w-full h-88 md:max-w-sm hover:bg-primary/20 transition duration-200">
                     <CardHeader>
                       <div className="w-full flex justify-center items-center">
                         <img
