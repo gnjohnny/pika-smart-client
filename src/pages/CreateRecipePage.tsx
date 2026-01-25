@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/card";
 import {
   Empty,
-  EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
@@ -19,28 +18,36 @@ import {
 import { LoadingSwap } from "@/components/ui/loading-swap";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useGenerateRecipe, useSaveRecipe } from "@/hooks/recipe.hooks";
 import {
   ArrowRight,
   CalendarClock,
   ChefHat,
+  CircleAlert,
   Clock,
   Clock1,
   Plus,
   Stars,
+  TriangleAlert,
   Users,
   X,
 } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
+import { toast } from "sonner";
 
 const CreateRecipePage = () => {
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [recipe, setRecipe] = useState<Recipe | null>(null);
+  const [reason, setReason] = useState<string>("");
 
   const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (inputRef.current) inputRef.current.focus();
   }, []);
+
+  const { generateRecipeMutation, isPending, reset } = useGenerateRecipe();
+  const { saveRecipeMutation, saveReset, saveLoad } = useSaveRecipe();
 
   const handleKeyDown = (e: any) => {
     if (e.key === "Enter" || e.key === ",") {
@@ -61,9 +68,41 @@ const CreateRecipePage = () => {
     setIngredients(ingredients.filter((_, i) => i !== idx));
   };
 
-  const isSubmitting = false;
+  const handleGenerateRecipe = async (data: Array<string>) => {
+    reset();
+    try {
+      const res = await generateRecipeMutation(data);
+      if (res.reason) {
+        setReason(res.reason);
+      }
+      if (res?.success) {
+        toast.success(res.message);
+        setRecipe(res.newRecipe as Recipe);
+      } else {
+        toast.error(res.message ?? "Error generating your recipe");
+      }
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Error generating your recipe";
+      toast.error(message);
+    }
+  };
 
-  // const handleGenerateRecipe = () => {};
+  const handleSaveRecipe = async (data: string) => {
+    saveReset();
+    try {
+      const res = await saveRecipeMutation(data);
+      if (res.success) {
+        toast.success(res.message);
+      } else {
+        toast.error(res.message ?? "Error saving your recipe");
+      }
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Error saving your recipe";
+      toast.error(message);
+    }
+  };
 
   return (
     <div className="w-full py-2 space-y-6">
@@ -91,7 +130,7 @@ const CreateRecipePage = () => {
             <TabsTrigger value="both">Ingredients and Budget</TabsTrigger>
           </TabsList>
           <TabsContent value="ingredients-only">
-            {isSubmitting ? (
+            {isPending ? (
               <Card className="gap-2">
                 <CardHeader className="flex justify-center items-center">
                   <AIGeneratingRecipeLoader color="oklch(70.5% 0.213 47.604)" />
@@ -116,9 +155,13 @@ const CreateRecipePage = () => {
                     <div className="p-4">
                       <div className="flex flex-wrap items-center gap-4 mb-2">
                         {ingredients.map((ing, idx) => (
-                          <Badge className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-50 text-green-700 border border-green-100 animate-scale-in">
+                          <Badge
+                            key={idx}
+                            className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-50 text-green-700 border border-green-100 animate-scale-in"
+                          >
                             {ing}
                             <button
+                              aria-label="remove ingredient button"
                               onClick={() => removeIngredient(idx)}
                               className="ml-1.5 hover:text-green-900 cursor-pointer"
                             >
@@ -142,6 +185,7 @@ const CreateRecipePage = () => {
                           className="flex-1 bg-transparent outline-none text-primary placeholder:text-primary/40 text-lg"
                         />
                         <button
+                          aria-label="add ingredient button"
                           onClick={addIngredient}
                           disabled={!inputValue.trim()}
                           className="p-2 bg-orange-600 rounded-full text-primary hover:text-primary/60 hover:bg-orange-600/80 disabled:opacity-50 disabled:hover:bg-orang-600/95 disabled:hover:text-primary/40 transition-colors duration-200 cursor-pointer"
@@ -154,12 +198,13 @@ const CreateRecipePage = () => {
 
                   <Button
                     type="submit"
-                    disabled={isSubmitting || ingredients.length === 0}
+                    disabled={isPending || ingredients.length === 0}
                     className="w-full bg-orange-600 hover:bg-orange-600/80 transition-colors duration-300 cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
                     size={"icon-lg"}
+                    onClick={() => handleGenerateRecipe(ingredients)}
                   >
                     <LoadingSwap
-                      isLoading={isSubmitting}
+                      isLoading={isPending}
                       className="text-white font-bold flex items-center justify-center gap-1.5 p-4"
                     >
                       <Stars size={20} /> Generate Recipe
@@ -169,7 +214,29 @@ const CreateRecipePage = () => {
 
                 {recipe && recipe !== null && <Separator />}
 
-                {recipe && recipe !== null && (
+                {reason && (
+                  <CardContent>
+                    {" "}
+                    <Empty className="bg-muted/30 h-full">
+                      <EmptyHeader>
+                        <EmptyMedia variant="icon">
+                          <CircleAlert
+                            size={38}
+                            className="text-red-600 font-bold"
+                          />
+                        </EmptyMedia>
+                        <EmptyTitle>
+                          Something went wrong while generating your recipe
+                        </EmptyTitle>
+                        <EmptyDescription className="max-w-xs text-pretty">
+                          {reason}
+                        </EmptyDescription>
+                      </EmptyHeader>
+                    </Empty>
+                  </CardContent>
+                )}
+
+                {recipe && (
                   <CardContent className="p-2 md:p-4 lg:p-6">
                     {" "}
                     <div className="h-fit bg-linear-to-br from-orange-600 to-orange-800 p-2 flex flex-col justify-end relative overflow-hidden rounded-t-2xl">
@@ -258,26 +325,36 @@ const CreateRecipePage = () => {
                         ))}
                       </div>
 
-                      {/* Chef's Tip */}
-                      {/* <div className="mt-8 bg-amber-50 p-4 rounded-xl border border-amber-100">
+                      <div className="mt-8 bg-amber-50 p-4 rounded-xl border border-amber-100">
                         <p className="text-amber-800 text-sm italic">
-                          <span className="font-bold not-italic">
-                            💡 Chef's Tip:{" "}
+                          <span className="text-xl font-bold not-italic flex">
+                            <TriangleAlert className="text-red-500" /> NOTE
                           </span>
-                          {recipe.tip}
+                          Please save your recipe once you close this page the
+                          recipe will not show again
                         </p>
-                      </div> */}
+                      </div>
 
                       <div className="p-4 w-full relative">
-                        <Button className="text-sm font-medium bg-orange-600 hover:bg-orange-600/80 flex items-center justify-center gap-1 mx-auto transition duration-200 cursor-pointer absolute right-1">
-                          Save this Recipe <ArrowRight size={16} />
+                        <Button
+                          type="submit"
+                          disabled={saveLoad}
+                          className="w-full bg-orange-600 hover:bg-orange-600/80 transition-colors duration-300 cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 absolute right-1"
+                          onClick={() => handleSaveRecipe(recipe._id)}
+                        >
+                          <LoadingSwap
+                            isLoading={saveLoad}
+                            className="text-white font-bold flex items-center justify-center gap-1.5 p-4"
+                          >
+                            Save this Recipe <ArrowRight size={16} />
+                          </LoadingSwap>
                         </Button>
                       </div>
                     </div>
                   </CardContent>
                 )}
 
-                {!recipe && !isSubmitting && (
+                {!recipe && !isPending && (
                   <div
                     className="mt-6 text-center animate-fade-in-delayed"
                     style={{

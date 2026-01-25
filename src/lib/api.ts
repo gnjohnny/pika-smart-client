@@ -83,3 +83,37 @@ export const resetPassword = async (data: {
     );
   }
 };
+
+export const getMyRecipes = async () => {
+  try {
+    const res = await axiosInstance.get("/recipe/my-recipes");
+    return res.data;
+  } catch (error: unknown) {
+    throw new Error(
+      getErrorMessage(error, "Something went wrong when getting your recipes"),
+    );
+  }
+};
+export const generateRecipe = async (data: Array<string>) => {
+  try {
+    const res = await axiosInstance.post("/recipe/generate", {
+      ingredients: data,
+    });
+    return res.data;
+  } catch (error: unknown) {
+    throw new Error(
+      getErrorMessage(
+        error,
+        "Something went wrong while generating your recipe",
+      ),
+    );
+  }
+};
+export const saveRecipe = async (id: string) => {
+  try {
+    const res = await axiosInstance.patch(`/recipe/save/${id}`);
+    return res.data;
+  } catch (error: unknown) {
+    throw new Error(getErrorMessage(error, "Something went wrong - try again"));
+  }
+};
