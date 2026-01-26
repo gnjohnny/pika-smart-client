@@ -8,7 +8,7 @@ export const useGetMyRecipes = () => {
   });
 
   return {
-    recipes: data,
+    userRecipes: data,
     isPending,
     error,
   };

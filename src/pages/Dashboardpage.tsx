@@ -167,8 +167,8 @@ const Dashboardpage = () => {
                   to={`/dashboard/recipe/${recipe._id}`}
                   key={recipe._id || idx}
                 >
-                  <Card className="mx-auto w-full h-88 md:max-w-sm hover:bg-primary/20 transition duration-200">
-                    <CardHeader>
+                  <Card className="mx-auto w-full h-68 md:max-w-sm hover:bg-primary/20 transition duration-200">
+                    <CardHeader className="h-3/4">
                       <div className="w-full flex justify-center items-center">
                         <img
                           src={"/chef.webp"}
@@ -177,14 +177,18 @@ const Dashboardpage = () => {
                           height={50}
                         />
                       </div>
-                      <CardTitle>{recipe.title}</CardTitle>
+                      <CardTitle>
+                        {recipe.title.length > 35
+                          ? recipe.title.slice(0, 35) + "..."
+                          : recipe.title}
+                      </CardTitle>
                       <CardDescription>
                         {recipe.description.length > 45
                           ? recipe.description.slice(0, 45) + "..."
                           : recipe.description}
                       </CardDescription>
                     </CardHeader>
-                    <CardFooter className="flex items-center gap-2">
+                    <CardFooter className="flex items-center gap-2 h-1/4">
                       <Badge className="bg-orange-200/80 border border-orange-400 flex justify-center items-center gap-1.5 text-black/80 font-semibold">
                         <Clock />
                         Cook time: {recipe.cook_time}min
