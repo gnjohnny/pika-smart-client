@@ -6,36 +6,53 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Clock, Grid3X3, List, Search, Stars, Utensils } from "lucide-react";
+import { Grid3X3, List, Search, Stars, UtensilsCrossed } from "lucide-react";
 import { Link } from "react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useGetMyRecipes } from "@/hooks/recipe.hooks";
 import CustomLoader from "@/components/loaders/main-loader";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import { RecipeCard } from "@/components/recipe/recipe-card";
 
 const RecipesPage = () => {
   const [showGrid, setShowGrid] = useState<boolean>(true);
+  const [queries, setQueries] = useState<RecipeQuery>({
+    title: "",
+    sortby: "newest",
+    page: 1,
+    limit: 10,
+  });
 
-  const { userRecipes, isPending } = useGetMyRecipes();
+  const [search, setSearch] = useState<string>("");
 
-  if (isPending)
-    return (
-      <div className="w-full h-[80vh] flex flex-col justify-center items-center">
-        <CustomLoader color="oklch(70.5% 0.213 47.604)" />
-        <p className="text-xs text-primary/60 animate-pulse">
-          Loading your recipes. Please wait...
-        </p>
-      </div>
-    );
+  const { userRecipes, isPending } = useGetMyRecipes(queries);
+
+  const recipes = userRecipes?.saved_recipes ?? [];
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setQueries((q) => ({ ...q, title: search, page: 1 }));
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    if (search === queries.title) return;
+
+    const timer = setTimeout(() => {
+      setQueries((q) => ({ ...q, title: search, page: 1 }));
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [search, queries.title]);
 
   return (
     <div className="w-full py-2 space-y-6">
@@ -66,19 +83,24 @@ const RecipesPage = () => {
             <input
               type="search"
               placeholder="Search your recipes..."
+              onChange={(e) => setSearch(e.target.value)}
               className="size-full border-none bg-none flex-1 outline-none rounded-r-xl placeholder: text-primary/70"
             />
           </div>
         </div>
         <div className="flex justify-center items-center gap-2 md:px-4">
-          <Select>
+          <Select
+            onValueChange={(value) =>
+              setQueries((q) => ({ ...q, sortby: value, page: 1 }))
+            }
+          >
             <SelectTrigger className="w-full max-w-48">
               <SelectValue placeholder="Sort recipes by" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="newest">Newest First</SelectItem>
               <SelectItem value="oldest">Oldest First</SelectItem>
-              <SelectItem value="name">Name A-Z</SelectItem>
+              <SelectItem value="title">Name A-Z</SelectItem>
             </SelectContent>
           </Select>
 
@@ -100,129 +122,99 @@ const RecipesPage = () => {
       </div>
 
       <div className="w-full">
+        {isPending && recipes.length === 0 && (
+          <div className="w-full h-[80vh] flex flex-col justify-center items-center">
+            <CustomLoader color="oklch(70.5% 0.213 47.604)" />
+            <p className="text-xs text-primary/60 animate-pulse">
+              Loading your recipes. Please wait...
+            </p>
+          </div>
+        )}
+
         {showGrid ? (
-          <div className="w-full p-1.5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-center gap-2">
-            {userRecipes.saved_recipes.map((recipe: Recipe, idx: number) => (
+          recipes.length > 0 ? (
+            <div className="w-full p-1.5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-center gap-2">
+              {recipes.map((recipe: Recipe, idx: number) => (
+                <Link
+                  to={`/dashboard/recipe/${recipe._id}`}
+                  key={recipe._id || idx}
+                  className="w-full"
+                >
+                  <RecipeCard recipe={recipe} variant="grid" />
+                </Link>
+              ))}
+            </div>
+          ) : (
+            !isPending && <EmptyState />
+          )
+        ) : recipes.length > 0 ? (
+          <div className="w-full p-1.5 flex justify-start items-center flex-col gap-2">
+            {recipes.map((recipe: Recipe, idx: number) => (
               <Link
                 to={`/dashboard/recipe/${recipe._id}`}
                 key={recipe._id || idx}
                 className="w-full"
               >
-                <Card className="mx-auto w-full h-88 md:max-w-sm hover:bg-primary/20 transition duration-200 gap-2">
-                  <CardHeader className="h-3/4">
-                    <div className="w-full flex justify-center items-center">
-                      <img
-                        src={"/chef.webp"}
-                        alt="pika smart brand logo"
-                        width={250}
-                        height={50}
-                      />
-                    </div>
-                    <CardTitle>
-                      {recipe.title.length > 35
-                        ? recipe.title.slice(0, 35) + "..."
-                        : recipe.title}
-                    </CardTitle>
-                    <CardDescription>
-                      {recipe.description.length > 45
-                        ? recipe.description.slice(0, 45) + "..."
-                        : recipe.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-primary/80 font-semibold">
-                      Generated At:{" "}
-                      <span className="text-xs font-bold">
-                        {format(recipe.createdAt, "dd MMMM, yyyy")}
-                      </span>
-                    </p>
-                    <p className="text-primary/80 font-semibold">
-                      {" "}
-                      Serves:{" "}
-                      <span className="text-xs font-bold">
-                        {recipe.servings}{" "}
-                        {recipe.servings > 1 ? "peoples" : "people"}
-                      </span>
-                    </p>
-                  </CardContent>
-                  <CardFooter className="flex items-center gap-2 h-1/4">
-                    <Badge className="bg-orange-200/80 border border-orange-400 flex justify-center items-center gap-1.5 text-black/80 font-semibold">
-                      <Clock />
-                      Cook time: {recipe.cook_time}min
-                    </Badge>
-                    <Badge className="bg-orange-200/80 border border-orange-400 flex justify-center items-center gap-1.5 text-black/80 font-semibold">
-                      <Utensils />
-                      {recipe.ingredients.length} ingridients used
-                    </Badge>
-                  </CardFooter>
-                </Card>
+                <RecipeCard recipe={recipe} variant="list" />
               </Link>
             ))}
           </div>
         ) : (
-          <div className="w-full p-1.5 flex justify-start items-center flex-col gap-2">
-            {userRecipes.saved_recipes.map((recipe: Recipe, idx: number) => (
-              <Link
-                to={`/dashboard/recipe/${recipe._id}`}
-                key={recipe._id || idx}
-                className="w-full"
-              >
-                <Card className="w-full gap-2 hover:bg-primary/20 transition duration-200">
-                  <div className="w-full flex justify-center items-center gap-2 p-1.5">
-                    <div className="flex justify-center items-center w-1/4">
-                      <img
-                        src={"/chef.webp"}
-                        alt="pika smart brand logo"
-                        width={150}
-                        height={150}
-                      />
-                    </div>
-
-                    <div className="flex justify-start items-start flex-col gap-1.5 w-3/4">
-                      <div>
-                        <CardTitle className="line-clamp-1">
-                          {recipe.title}
-                        </CardTitle>
-                        <CardDescription className="line-clamp-1 md:line-clamp-2">
-                          {recipe.description}
-                        </CardDescription>
-                      </div>
-                      <div>
-                        <p className="text-primary/80 text-sm font-semibold">
-                          Generated At:{" "}
-                          <span className="text-xs font-bold">
-                            {format(recipe.createdAt, "dd MMMM, yyyy")}
-                          </span>
-                        </p>
-                        <p className="text-primary/80 text-sm font-semibold">
-                          {" "}
-                          Serves:{" "}
-                          <span className="text-xs font-bold">
-                            {recipe.servings}{" "}
-                            {recipe.servings > 1 ? "peoples" : "people"}
-                          </span>
-                        </p>
-                      </div>
-                      <div className="flex justify-start items-start gap-2 h-fit">
-                        <Badge className="bg-orange-200/80 border border-orange-400 flex justify-center items-center gap-1.5 text-black/80 font-semibold">
-                          <Clock />
-                          Cook time: {recipe.cook_time}min
-                        </Badge>
-                        <Badge className="bg-orange-200/80 border border-orange-400 flex justify-center items-center gap-1.5 text-black/80 font-semibold">
-                          <Utensils />
-                          {recipe.ingredients.length} ingridients used
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              </Link>
-            ))}
-          </div>
+          !isPending && <EmptyState />
         )}
+
+        <div className="w-full flex flex-col justify-center items-center gap-2">
+          {!isPending && (
+            <p className="text-sm font-bold text-primary/70">
+              {`Showing page ${userRecipes?.currentPage} of ${userRecipes?.totalPages}`}
+            </p>
+          )}
+
+          {!isPending &&
+            Array.from(
+              { length: userRecipes?.totalPages || 0 },
+              (_, i) => i + 1,
+            ).map((pageNum) => (
+              <button
+                className={`px-2 py-1 rounded ${
+                  userRecipes?.currentPage === pageNum
+                    ? "bg-primary text-white"
+                    : "text-primary/70"
+                }`}
+                disabled={userRecipes?.currentPage === pageNum}
+                onClick={() => setQueries((q) => ({ ...q, page: pageNum }))}
+              >
+                {pageNum}
+              </button>
+            ))}
+        </div>
       </div>
     </div>
   );
 };
 
 export default RecipesPage;
+
+const EmptyState = () => {
+  return (
+    <Empty className="bg-muted/30 h-full">
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <UtensilsCrossed />
+        </EmptyMedia>
+        <EmptyTitle>No Recipes Found</EmptyTitle>
+        <EmptyDescription className="max-w-xs text-pretty">
+          No recipes found. Click the button below to start generating now.
+        </EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+        <Link to={"/dashboard/create"}>
+          <Button variant="outline" className="cursor-pointer">
+            <Stars />
+            Generate Recipe
+          </Button>
+        </Link>
+      </EmptyContent>
+    </Empty>
+  );
+};

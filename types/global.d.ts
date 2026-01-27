@@ -66,4 +66,15 @@ declare global {
     _id: string;
     reason: string;
   };
+  type RecipeQuery = {
+    title?: string;
+    sortby?: string;
+    page?: number;
+    limit?: number;
+  };
+  type RecipeVariant = "grid" | "list";
+  type RecipeCardProps = {
+    recipe: Recipe;
+    variant?: RecipeVariant;
+  };
 }
