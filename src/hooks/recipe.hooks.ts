@@ -1,10 +1,21 @@
 import { generateRecipe, getMyRecipes, saveRecipe } from "@/lib/api";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  keepPreviousData,
+} from "@tanstack/react-query";
 
-export const useGetMyRecipes = () => {
+export const useGetMyRecipes = ({
+  title,
+  sortby,
+  page = 1,
+  limit = 10,
+}: RecipeQuery) => {
   const { data, isPending, error } = useQuery({
-    queryKey: ["recipes"],
-    queryFn: getMyRecipes,
+    queryKey: ["recipes", { title, sortby, page, limit }],
+    queryFn: () => getMyRecipes(["recipes", { title, sortby, page, limit }]),
+    placeholderData: keepPreviousData,
   });
 
   return {

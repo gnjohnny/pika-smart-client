@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/empty";
 import { extractNameFromEmail } from "@/helpers/helpers";
 import { useAuth } from "@/hooks/auth.hooks";
+import { format } from "date-fns";
 import {
   ArrowRight,
   Bot,
@@ -59,7 +60,7 @@ const Dashboardpage = () => {
     {
       title: "Member since",
       icon: Calendar,
-      stat: new Date(authUser?.user.createdAt).toLocaleDateString(),
+      stat: format(authUser?.user.createdAt, "dd MMMM, yyyy"),
       desc: "Account created",
     },
   ];

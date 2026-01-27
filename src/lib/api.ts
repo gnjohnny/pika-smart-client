@@ -84,9 +84,12 @@ export const resetPassword = async (data: {
   }
 };
 
-export const getMyRecipes = async () => {
+export const getMyRecipes = async (queryKey: [string, RecipeQuery]) => {
+  const [_key, { title, sortby, page = 1, limit = 10 }] = queryKey;
   try {
-    const res = await axiosInstance.get("/recipe/my-recipes");
+    const res = await axiosInstance.get("/recipe/my-recipes", {
+      params: { title, sortby, page, limit },
+    });
     return res.data;
   } catch (error: unknown) {
     throw new Error(
