@@ -60,7 +60,9 @@ const Dashboardpage = () => {
     {
       title: "Member since",
       icon: Calendar,
-      stat: format(authUser?.user.createdAt, "dd MMMM, yyyy"),
+      stat: authUser?.user?.createdAt
+        ? format(authUser?.user.createdAt, "dd MMMM, yyyy")
+        : "_",
       desc: "Account created",
     },
   ];

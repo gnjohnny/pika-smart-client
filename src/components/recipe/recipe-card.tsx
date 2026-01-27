@@ -64,7 +64,7 @@ const RecipeBadges = ({ recipe }: { recipe: Recipe }) => {
       </Badge>
       <Badge className="bg-orange-200/80 border border-orange-400 flex justify-center items-center gap-1.5 text-black/80 font-semibold">
         <Utensils />
-        {recipe.ingredients.length} ingridients used
+        {recipe.ingredients.length} ingredients used
       </Badge>
     </CardFooter>
   );
