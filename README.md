@@ -22,9 +22,9 @@ The application consumes the **PikaSmart API**, which is powered by **Google Gem
 - **Framework:** React (Vite)
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS
-- **State Management:** React Hooks / Zustand
+- **State Management:** React Hooks / tanstack query
 - **API Communication:** Fetch / Axios
-- **AI Backend:** PikaSmart API (Gemini Pro)
+- **AI Backend:** PikaSmart API (Gemini Flash)
 
 ---
 
