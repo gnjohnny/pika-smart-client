@@ -1,4 +1,9 @@
-import { generateRecipe, getMyRecipes, saveRecipe } from "@/lib/api";
+import {
+  generateRecipe,
+  getFavouritedRecipes,
+  getMyRecipes,
+  saveRecipe,
+} from "@/lib/api";
 import {
   useMutation,
   useQuery,
@@ -57,5 +62,27 @@ export const useSaveRecipe = () => {
     saveLoad: isPending,
     saveError: error,
     saveReset: reset,
+  };
+};
+
+export const useGetFavouriteRecipe = ({
+  title,
+  sortby,
+  page = 1,
+  limit = 10,
+}: RecipeQuery) => {
+  const { data, isPending, error } = useQuery({
+    queryKey: ["favourite-recipes", { title, sortby, page, limit }],
+    queryFn: () =>
+      getFavouritedRecipes([
+        "favourite-recipes",
+        { title, sortby, page, limit },
+      ]),
+    placeholderData: keepPreviousData,
+  });
+  return {
+    favouriteRecipes: data,
+    isPending,
+    error,
   };
 };
