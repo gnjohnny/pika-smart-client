@@ -6,20 +6,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Grid3X3, List, Search, Stars, UtensilsCrossed } from "lucide-react";
+import { Grid3X3, List, Search, Stars } from "lucide-react";
 import { Link } from "react-router";
 import { useState, useEffect } from "react";
 import { useGetMyRecipes } from "@/hooks/recipe.hooks";
 import CustomLoader from "@/components/loaders/main-loader";
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@/components/ui/empty";
 import { RecipeCard } from "@/components/recipe/recipe-card";
+import { EmptyState } from "@/components/empty-state";
 
 const RecipesPage = () => {
   const [showGrid, setShowGrid] = useState<boolean>(true);
@@ -194,27 +187,3 @@ const RecipesPage = () => {
 };
 
 export default RecipesPage;
-
-const EmptyState = () => {
-  return (
-    <Empty className="bg-muted/30 h-full">
-      <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <UtensilsCrossed />
-        </EmptyMedia>
-        <EmptyTitle>No Recipes Found</EmptyTitle>
-        <EmptyDescription className="max-w-xs text-pretty">
-          No recipes found. Click the button below to start generating now.
-        </EmptyDescription>
-      </EmptyHeader>
-      <EmptyContent>
-        <Link to={"/dashboard/create"}>
-          <Button variant="outline" className="cursor-pointer">
-            <Stars />
-            Generate Recipe
-          </Button>
-        </Link>
-      </EmptyContent>
-    </Empty>
-  );
-};

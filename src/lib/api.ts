@@ -12,10 +12,8 @@ const getErrorMessage = (error: unknown, fallback: string) => {
 export const getAuthUser = async () => {
   try {
     const res = await axiosInstance.get("/auth/me");
-    console.log(res.data);
     return res.data;
   } catch (err: unknown) {
-    console.log("error:", err);
     return null;
   }
 };
@@ -115,6 +113,17 @@ export const generateRecipe = async (data: Array<string>) => {
 export const saveRecipe = async (id: string) => {
   try {
     const res = await axiosInstance.patch(`/recipe/save/${id}`);
+    return res.data;
+  } catch (error: unknown) {
+    throw new Error(getErrorMessage(error, "Something went wrong - try again"));
+  }
+};
+export const getFavouritedRecipes = async (queryKey: [string, RecipeQuery]) => {
+  const [_key, { title, sortby, page = 1, limit = 10 }] = queryKey;
+  try {
+    const res = await axiosInstance.get("/recipe/favourite-recipes", {
+      params: { title, sortby, page, limit },
+    });
     return res.data;
   } catch (error: unknown) {
     throw new Error(getErrorMessage(error, "Something went wrong - try again"));
