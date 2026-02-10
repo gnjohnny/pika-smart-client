@@ -2,6 +2,7 @@ import {
   generateRecipe,
   getFavouritedRecipes,
   getMyRecipes,
+  getTrashedRecipes,
   saveRecipe,
 } from "@/lib/api";
 import {
@@ -82,6 +83,20 @@ export const useGetFavouriteRecipe = ({
   });
   return {
     favouriteRecipes: data,
+    isPending,
+    error,
+  };
+};
+
+export const useGetTrashedRecipes = () => {
+  const { data, isPending, error } = useQuery({
+    queryKey: ["trashed-recipes"],
+    queryFn: getTrashedRecipes,
+    placeholderData: keepPreviousData,
+  });
+
+  return {
+    trashedRecipes: data,
     isPending,
     error,
   };

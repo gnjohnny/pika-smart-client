@@ -129,3 +129,12 @@ export const getFavouritedRecipes = async (queryKey: [string, RecipeQuery]) => {
     throw new Error(getErrorMessage(error, "Something went wrong - try again"));
   }
 };
+
+export const getTrashedRecipes = async () => {
+  try {
+    const res = await axiosInstance.get("/recipe/trashed-recipes");
+    return res.data;
+  } catch (error: unknown) {
+    throw new Error(getErrorMessage(error, "Something went wrong - try again"));
+  }
+};

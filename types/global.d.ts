@@ -77,4 +77,11 @@ declare global {
     recipe: Recipe;
     variant?: RecipeVariant;
   };
+  type EmptyStateProps = {
+    title?: string;
+    desc?: string;
+    link?: string;
+    Icon?: LucideIcon;
+    buttonText?: string;
+  };
 }
