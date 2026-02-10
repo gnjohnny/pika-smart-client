@@ -9,15 +9,6 @@ import {
 import { Link } from "react-router";
 import { Button } from "./ui/button";
 import { Stars, UtensilsCrossed } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-
-type EmptyStateProps = {
-  title?: string;
-  desc?: string;
-  link?: string;
-  Icon?: LucideIcon;
-  buttonText?: string;
-};
 
 export const EmptyState = ({
   title,
