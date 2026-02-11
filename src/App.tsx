@@ -15,6 +15,7 @@ import RecipesPage from "./pages/RecipesPage";
 import FavouriteRecipesPage from "./pages/FavouriteRecipesPage";
 import TrashedRecipesPage from "./pages/TrashedRecipesPage";
 import SettingsPage from "./pages/SettingsPage";
+import FullRecipePage from "./pages/FullRecipePage";
 
 const App = () => {
   const { authUser, isPending } = useAuth();
@@ -118,6 +119,14 @@ const App = () => {
           element={
             <DashBoardLayout>
               <SettingsPage />
+            </DashBoardLayout>
+          }
+        />
+        <Route
+          path="/dashboard/recipe/:id"
+          element={
+            <DashBoardLayout>
+              <FullRecipePage />
             </DashBoardLayout>
           }
         />
