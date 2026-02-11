@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CustomLoader from "@/components/loaders/main-loader";
 import { useGetFavouriteRecipe } from "@/hooks/recipe.hooks";
 import { Link } from "react-router";
 import { RecipeCard } from "@/components/recipe/recipe-card";
 import { EmptyState } from "@/components/empty-state";
-import { Heart } from "lucide-react";
+import { Heart, Search } from "lucide-react";
 
 const FavouriteRecipesPage = () => {
   const [queries, setQueries] = useState<RecipeQuery>({
@@ -13,11 +13,30 @@ const FavouriteRecipesPage = () => {
     page: 1,
     limit: 10,
   });
+  const [search, setSearch] = useState<string>("");
   const { favouriteRecipes, isPending } = useGetFavouriteRecipe(queries);
   const recipes = favouriteRecipes?.saved_recipes ?? [];
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setQueries((q) => ({ ...q, title: search, page: 1 }));
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    if (search === queries.title) return;
+
+    const timer = setTimeout(() => {
+      setQueries((q) => ({ ...q, title: search, page: 1 }));
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [search, queries.title]);
   return (
     <div className="w-full py-2 space-y-6">
-      <div className="w-full p-2 flex justify-start items-start">
+      <div className="w-full p-2 flex justify-start items-start flex-col">
         <div className="space-y-1.5 flex flex-col items-start">
           <h1 className="text-xl md:text-2xl lg:text-4xl font-semibold text-primary/80">
             All Your Favourited Recipes
@@ -25,6 +44,19 @@ const FavouriteRecipesPage = () => {
           <p className="text-xs md:text-sm text-primary/70">
             Manage and Organize all of your favourited Recipes
           </p>
+        </div>
+        <div className="w-full my-4">
+          <div className="lg:w-3/4 h-10 border border-primary/30 rounded-xl flex justify-start items-start gap-2">
+            <div className="h-full p-1 flex justify-center items-center">
+              <Search size={22} className="text-primary/60" />
+            </div>
+            <input
+              type="search"
+              placeholder="Search your recipes..."
+              onChange={(e) => setSearch(e.target.value)}
+              className="size-full border-none bg-none flex-1 outline-none rounded-r-xl placeholder: text-primary/70"
+            />
+          </div>
         </div>
       </div>
 
