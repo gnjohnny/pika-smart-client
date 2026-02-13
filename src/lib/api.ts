@@ -138,3 +138,12 @@ export const getTrashedRecipes = async () => {
     throw new Error(getErrorMessage(error, "Something went wrong - try again"));
   }
 };
+
+export const getRecipeDetailedInfo = async (id: string) => {
+  try {
+    const res = await axiosInstance.get(`/recipe/recipe-info/${id}`);
+    return res.data;
+  } catch (error: unknown) {
+    throw new Error(getErrorMessage(error, "Something went wrong - try again"));
+  }
+};

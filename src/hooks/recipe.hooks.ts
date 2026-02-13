@@ -2,6 +2,7 @@ import {
   generateRecipe,
   getFavouritedRecipes,
   getMyRecipes,
+  getRecipeDetailedInfo,
   getTrashedRecipes,
   saveRecipe,
 } from "@/lib/api";
@@ -11,6 +12,21 @@ import {
   useQueryClient,
   keepPreviousData,
 } from "@tanstack/react-query";
+
+export const useGetRecipeDetailedInfo = ({ id }: { id: string }) => {
+  console.log(id);
+  const { data, isPending, error } = useQuery({
+    queryKey: ["recipe-detailed-info", { id }],
+    queryFn: () => getRecipeDetailedInfo(id),
+    placeholderData: keepPreviousData,
+  });
+
+  return {
+    detailedInfo: data,
+    isPending,
+    error,
+  };
+};
 
 export const useGetMyRecipes = ({
   title,
