@@ -171,11 +171,12 @@ const RecipesPage = () => {
               <button
                 className={`px-2 py-1 rounded ${
                   userRecipes?.currentPage === pageNum
-                    ? "bg-primary text-white"
+                    ? "bg-primary text-secondary"
                     : "text-primary/70"
                 }`}
                 disabled={userRecipes?.currentPage === pageNum}
                 onClick={() => setQueries((q) => ({ ...q, page: pageNum }))}
+                key={pageNum}
               >
                 {pageNum}
               </button>
