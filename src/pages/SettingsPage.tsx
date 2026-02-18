@@ -18,7 +18,7 @@ import Bowser from "bowser";
 
 const SettingsPage = () => {
   const { authUser } = useAuth();
-  const [email, setEmail] = useState<string>(authUser?.user.email || "");
+  const [email, setEmail] = useState<string>("");
   const [passwords, setPasswords] = useState<{
     current: string;
     new: string;
@@ -30,6 +30,12 @@ const SettingsPage = () => {
 
   const [browserName, setBrowserName] = useState<string>("");
   const [os, setOs] = useState<string>("");
+
+  useEffect(() => {
+    if (authUser?.user.email) {
+      setEmail(authUser.user.email);
+    }
+  }, [authUser?.user.email]);
 
   useEffect(() => {
     const browser = Bowser.getParser(window.navigator.userAgent);
@@ -66,7 +72,7 @@ const SettingsPage = () => {
           />
           <Separator className="my-4" />
         </CardContent>
-        <CardFooter className="px-4 flex justify-between align-center">
+        <CardFooter className="px-4 flex justify-between items-center">
           <p className="text-xs md:text-sm text-primary/80">
             Enter a valid email to update your account settings
           </p>
@@ -121,7 +127,7 @@ const SettingsPage = () => {
           </div>
           <Separator className="my-4" />
         </CardContent>
-        <CardFooter className="px-4 flex justify-between align-center">
+        <CardFooter className="px-4 flex justify-between items-center">
           <p className="text-xs md:text-sm text-primary/80">
             Please use 6 characters at minimum.
           </p>
