@@ -5,6 +5,8 @@ import {
   SignIn,
   SignOut,
   SignUp,
+  updateEmail,
+  updatePassword,
 } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router";
@@ -107,5 +109,39 @@ export const useResetPassword = () => {
   return {
     resetPasswordMutation: mutateAsync,
     reset,
+  };
+};
+
+export const useUpdateEmail = () => {
+  const queryClient = useQueryClient();
+  const { mutateAsync, isPending, error, reset } = useMutation({
+    mutationFn: updateEmail,
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["auth_user"] });
+    },
+  });
+
+  return {
+    updateEmail: mutateAsync,
+    isPending,
+    error,
+    reset,
+  };
+};
+
+export const useUpdatePassword = () => {
+  const queryClient = useQueryClient();
+  const { mutateAsync, isPending, error, reset } = useMutation({
+    mutationFn: updatePassword,
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["auth_user"] });
+    },
+  });
+
+  return {
+    updatePassword: mutateAsync,
+    updatePasswordPending: isPending,
+    updatePasswordError: error,
+    resetUpdatePassword: reset,
   };
 };

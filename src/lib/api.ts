@@ -147,3 +147,30 @@ export const getRecipeDetailedInfo = async (id: string) => {
     throw new Error(getErrorMessage(error, "Something went wrong - try again"));
   }
 };
+
+export const updateEmail = async ({ newEmail }: { newEmail: string }) => {
+  try {
+    const res = await axiosInstance.patch("/auth/update-email", { newEmail });
+    return res.data;
+  } catch (error: unknown) {
+    throw new Error(getErrorMessage(error, "Something went wrong - try again"));
+  }
+};
+
+export const updatePassword = async ({
+  currentPassword,
+  newPassword,
+}: {
+  currentPassword: string;
+  newPassword: string;
+}) => {
+  try {
+    const res = await axiosInstance.patch("/auth/update-password", {
+      currentPassword,
+      newPassword,
+    });
+    return res.data;
+  } catch (error: unknown) {
+    throw new Error(getErrorMessage(error, "Something went wrong - try again"));
+  }
+};
