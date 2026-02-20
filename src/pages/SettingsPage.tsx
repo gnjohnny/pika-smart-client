@@ -72,6 +72,7 @@ const SettingsPage = () => {
       });
       if (res.success) {
         toast.success(res.message);
+        setPasswords({ current: "", new: "" });
       } else {
         toast.error(res.message);
       }
