@@ -11,10 +11,11 @@ import { Input } from "@/components/ui/input";
 import { LoadingSwap } from "@/components/ui/loading-swap";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Separator } from "@/components/ui/separator";
-import { useAuth } from "@/hooks/auth.hooks";
+import { useAuth, useUpdateEmail, useUpdatePassword } from "@/hooks/auth.hooks";
 import { Laptop } from "lucide-react";
 import { useState, useEffect } from "react";
 import Bowser from "bowser";
+import { toast } from "sonner";
 
 const SettingsPage = () => {
   const { authUser } = useAuth();
@@ -26,7 +27,6 @@ const SettingsPage = () => {
     current: "",
     new: "",
   });
-  const isSubmitting = false;
 
   const [browserName, setBrowserName] = useState<string>("");
   const [os, setOs] = useState<string>("");
@@ -42,6 +42,45 @@ const SettingsPage = () => {
     setBrowserName(browser.getBrowserName());
     setOs(browser.getOSName());
   }, []);
+
+  const { updateEmail, isPending, reset } = useUpdateEmail();
+  const { updatePassword, resetUpdatePassword, updatePasswordPending } =
+    useUpdatePassword();
+
+  const handleEmailUpdate = async () => {
+    reset();
+    try {
+      const res = await updateEmail({ newEmail: email });
+      if (res.success) {
+        toast.success(res.message);
+      } else {
+        toast.error(res.message);
+      }
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Something went wrong";
+      toast.error(message);
+    }
+  };
+
+  const handlePasswordUpdate = async () => {
+    resetUpdatePassword();
+    try {
+      const res = await updatePassword({
+        currentPassword: passwords.current,
+        newPassword: passwords.new,
+      });
+      if (res.success) {
+        toast.success(res.message);
+      } else {
+        toast.error(res.message);
+      }
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Something went wrong";
+      toast.error(message);
+    }
+  };
   return (
     <div className="w-full space-y-6">
       <div className="w-full p-2">
@@ -78,13 +117,11 @@ const SettingsPage = () => {
           </p>
           <Button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isPending}
             className="bg-orange-600 hover:bg-orange-600/80 transition-colors duration-300 cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+            onClick={handleEmailUpdate}
           >
-            <LoadingSwap
-              isLoading={isSubmitting}
-              className="text-white font-bold"
-            >
+            <LoadingSwap isLoading={isPending} className="text-white font-bold">
               Save
             </LoadingSwap>
           </Button>
@@ -133,11 +170,12 @@ const SettingsPage = () => {
           </p>
           <Button
             type="submit"
-            disabled={isSubmitting}
+            disabled={updatePasswordPending}
             className="bg-orange-600 hover:bg-orange-600/80 transition-colors duration-300 cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+            onClick={handlePasswordUpdate}
           >
             <LoadingSwap
-              isLoading={isSubmitting}
+              isLoading={updatePasswordPending}
               className="text-white font-bold"
             >
               Save
