@@ -33,12 +33,10 @@ const FullRecipePage = () => {
   const { favouriteRecipes } = useGetFavouriteRecipe({
     title: "",
     sortby: "newest",
-    page: 1,
-    limit: 10,
   });
 
   const isFavourited =
-    favouriteRecipes?.favourite_recipes.some(
+    favouriteRecipes?.favourite_recipes?.some(
       (fav: Recipe) => fav._id === recipe?._id,
     ) ?? false;
 
@@ -173,7 +171,7 @@ const FullRecipePage = () => {
               className="font-bold bg-orange-400 hover:bg-orange-400/80 cursor-pointer transition duration-200 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center gap-1.5"
               title="favourite"
               onClick={handleFavourite}
-              disabled={isFavourited}
+              disabled={isFavourited || isFavouritePending}
             >
               <LoadingSwap
                 isLoading={isFavouritePending}
