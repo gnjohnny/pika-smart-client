@@ -174,3 +174,12 @@ export const updatePassword = async ({
     throw new Error(getErrorMessage(error, "Something went wrong - try again"));
   }
 };
+
+export const favouriteRecipe = async (id: string) => {
+  try {
+    const res = await axiosInstance.patch(`/recipe/favourite/${id}`);
+    return res.data;
+  } catch (error: unknown) {
+    throw new Error(getErrorMessage(error, "Something went wrong - try again"));
+  }
+};

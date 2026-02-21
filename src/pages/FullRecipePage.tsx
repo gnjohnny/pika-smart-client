@@ -1,8 +1,13 @@
 import { EmptyState } from "@/components/empty-state";
 import CustomLoader from "@/components/loaders/main-loader";
 import { Button } from "@/components/ui/button";
+import { LoadingSwap } from "@/components/ui/loading-swap";
 import { Separator } from "@/components/ui/separator";
-import { useGetRecipeDetailedInfo } from "@/hooks/recipe.hooks";
+import {
+  useFavouriteRecipe,
+  useGetFavouriteRecipe,
+  useGetRecipeDetailedInfo,
+} from "@/hooks/recipe.hooks";
 import { format } from "date-fns";
 import {
   Camera,
@@ -14,6 +19,7 @@ import {
   UtensilsCrossed,
 } from "lucide-react";
 import { useParams } from "react-router";
+import { toast } from "sonner";
 
 const FullRecipePage = () => {
   const { id } = useParams();
@@ -23,6 +29,41 @@ const FullRecipePage = () => {
   });
 
   const recipe: Recipe | null = detailedInfo?.recipe ?? null;
+
+  const { favouriteRecipes } = useGetFavouriteRecipe({
+    title: "",
+    sortby: "newest",
+    page: 1,
+    limit: 10,
+  });
+
+  const isFavourited =
+    favouriteRecipes?.favourite_recipes.some(
+      (fav: Recipe) => fav._id === recipe?._id,
+    ) ?? false;
+
+  const {
+    favouriteRecipeMutation,
+    isPending: isFavouritePending,
+    reset: resetFavourite,
+  } = useFavouriteRecipe();
+
+  const handleFavourite = async () => {
+    if (!recipe) return;
+    resetFavourite();
+    try {
+      const res = await favouriteRecipeMutation(recipe._id);
+      if (res.success) {
+        toast.success(res.message);
+      } else {
+        toast.error(res.message);
+      }
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Something went wrong";
+      toast.error(message);
+    }
+  };
 
   return (
     <div className="w-full p-1.5">
@@ -129,10 +170,25 @@ const FullRecipePage = () => {
 
           <div className="w-full flex gap-4 justify-end mb-6">
             <Button
-              className="font-bold flex items-center justify-center gap-1.5 bg-orange-400 hover:bg-orange-400/80 cursor-pointer transition duration-200"
+              className="font-bold bg-orange-400 hover:bg-orange-400/80 cursor-pointer transition duration-200 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center gap-1.5"
               title="favourite"
+              onClick={handleFavourite}
+              disabled={isFavourited}
             >
-              <Heart /> Favorite Recipe
+              <LoadingSwap
+                isLoading={isFavouritePending}
+                className="text-white font-bold flex items-center justify-center gap-1.5"
+              >
+                {!isFavourited ? (
+                  <>
+                    <Heart /> Favorite Recipe
+                  </>
+                ) : (
+                  <>
+                    <Heart className="fill-white" /> Already Favorited
+                  </>
+                )}
+              </LoadingSwap>
             </Button>
             <Button
               className="font-bold flex items-center justify-center gap-1.5 cursor-pointer"
