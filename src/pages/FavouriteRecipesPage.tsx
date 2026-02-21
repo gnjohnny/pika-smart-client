@@ -15,7 +15,7 @@ const FavouriteRecipesPage = () => {
   });
   const [search, setSearch] = useState<string>("");
   const { favouriteRecipes, isPending } = useGetFavouriteRecipe(queries);
-  const recipes = favouriteRecipes?.saved_recipes ?? [];
+  const recipes = favouriteRecipes?.favourite_recipes ?? [];
 
   useEffect(() => {
     const timer = setTimeout(() => {

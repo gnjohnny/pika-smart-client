@@ -1,4 +1,5 @@
 import {
+  favouriteRecipe,
   generateRecipe,
   getFavouritedRecipes,
   getMyRecipes,
@@ -115,5 +116,22 @@ export const useGetTrashedRecipes = () => {
     trashedRecipes: data,
     isPending,
     error,
+  };
+};
+
+export const useFavouriteRecipe = () => {
+  const queryClient = useQueryClient();
+  const { reset, mutateAsync, isPending, error } = useMutation({
+    mutationFn: favouriteRecipe,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["favourite-recipes"] });
+    },
+  });
+
+  return {
+    favouriteRecipeMutation: mutateAsync,
+    isPending,
+    error,
+    reset,
   };
 };
