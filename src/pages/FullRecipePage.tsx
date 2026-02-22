@@ -89,7 +89,11 @@ const FullRecipePage = () => {
               className="absolute top-2 right-2 bg-orange-400 text-white rounded-full w-8 h-8 flex items-center justify-center cursor-pointer z-30"
               title="favourite"
             >
-              <Heart size={16} className="text-white" />
+              {isFavourited ? (
+                <Heart size={16} className="fill-white" />
+              ) : (
+                <Heart size={16} className="text-white" />
+              )}
             </span>
           </div>
 
