@@ -6,6 +6,7 @@ import {
   getRecipeDetailedInfo,
   getTrashedRecipes,
   saveRecipe,
+  trashRecipe,
 } from "@/lib/api";
 import {
   useMutation,
@@ -13,7 +14,6 @@ import {
   useQueryClient,
   keepPreviousData,
 } from "@tanstack/react-query";
-import { trashRecipe } from "../lib/api";
 
 export const useGetRecipeDetailedInfo = ({ id }: { id: string }) => {
   const { data, isPending, error } = useQuery({
@@ -141,8 +141,11 @@ export const useTrashRecipe = () => {
   const queryClient = useQueryClient();
   const { mutateAsync, reset, isPending, error } = useMutation({
     mutationFn: trashRecipe,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["recipes"] });
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["recipes"] }),
+        queryClient.invalidateQueries({ queryKey: ["trashed-recipes"] }),
+      ]);
     },
   });
 
