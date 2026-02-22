@@ -7,6 +7,8 @@ import {
   useFavouriteRecipe,
   useGetFavouriteRecipe,
   useGetRecipeDetailedInfo,
+  useGetTrashedRecipes,
+  useTrashRecipe,
 } from "@/hooks/recipe.hooks";
 import { format } from "date-fns";
 import {
@@ -35,9 +37,16 @@ const FullRecipePage = () => {
     sortby: "newest",
   });
 
+  const { trashedRecipes } = useGetTrashedRecipes();
+
   const isFavourited =
     favouriteRecipes?.favourite_recipes?.some(
       (fav: Recipe) => fav._id === recipe?._id,
+    ) ?? false;
+
+  const isTrashed =
+    trashedRecipes?.trashed_recipes?.some(
+      (trashed: Recipe) => trashed._id === recipe?._id,
     ) ?? false;
 
   const {
@@ -45,12 +54,31 @@ const FullRecipePage = () => {
     isPending: isFavouritePending,
     reset: resetFavourite,
   } = useFavouriteRecipe();
+  const { trashRecipeLoad, trashRecipeMutation, trashRecipeReset } =
+    useTrashRecipe();
 
   const handleFavourite = async () => {
     if (!recipe) return;
     resetFavourite();
     try {
       const res = await favouriteRecipeMutation(recipe._id);
+      if (res.success) {
+        toast.success(res.message);
+      } else {
+        toast.error(res.message);
+      }
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Something went wrong";
+      toast.error(message);
+    }
+  };
+
+  const handleTrash = async () => {
+    if (!recipe) return;
+    trashRecipeReset();
+    try {
+      const res = await trashRecipeMutation(recipe._id);
       if (res.success) {
         toast.success(res.message);
       } else {
@@ -175,7 +203,7 @@ const FullRecipePage = () => {
               className="font-bold bg-orange-400 hover:bg-orange-400/80 cursor-pointer transition duration-200 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center gap-1.5"
               title="favourite"
               onClick={handleFavourite}
-              disabled={isFavourited || isFavouritePending}
+              disabled={isFavourited || isFavouritePending || isTrashed}
             >
               <LoadingSwap
                 isLoading={isFavouritePending}
@@ -193,11 +221,26 @@ const FullRecipePage = () => {
               </LoadingSwap>
             </Button>
             <Button
-              className="font-bold flex items-center justify-center gap-1.5 cursor-pointer"
+              className="font-bold cursor-pointer transition duration-200 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center gap-1.5"
               variant={"outline"}
               title="trash"
+              onClick={handleTrash}
+              disabled={isTrashed || trashRecipeLoad}
             >
-              <Trash2 className="text-red-400" /> Move Recipe To Trash
+              <LoadingSwap
+                isLoading={trashRecipeLoad}
+                className="text-white font-bold flex items-center justify-center gap-1.5"
+              >
+                {isTrashed ? (
+                  <>
+                    <Trash2 className="fill-red-400" /> Trashed
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="text-red-400" /> Move To Trash
+                  </>
+                )}
+              </LoadingSwap>
             </Button>
           </div>
 

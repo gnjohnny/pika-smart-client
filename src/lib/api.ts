@@ -183,3 +183,12 @@ export const favouriteRecipe = async (id: string) => {
     throw new Error(getErrorMessage(error, "Something went wrong - try again"));
   }
 };
+
+export const trashRecipe = async (id: string) => {
+  try {
+    const res = await axiosInstance.patch(`/recipe/move-to-trash/${id}`);
+    return res.data;
+  } catch (error: unknown) {
+    throw new Error(getErrorMessage(error, "Something went wrong - try again"));
+  }
+};
