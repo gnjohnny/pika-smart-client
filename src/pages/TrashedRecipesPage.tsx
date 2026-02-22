@@ -7,7 +7,7 @@ import { Trash } from "lucide-react";
 
 const TrashedRecipesPage = () => {
   const { trashedRecipes, isPending } = useGetTrashedRecipes();
-  const recipes = trashedRecipes?.saved_recipes ?? [];
+  const recipes = trashedRecipes?.trashed_recipes ?? [];
   return (
     <div className="w-full py-2 space-y-6">
       <div className="w-full p-2 flex justify-start items-start">
