@@ -229,7 +229,7 @@ const FullRecipePage = () => {
             >
               <LoadingSwap
                 isLoading={trashRecipeLoad}
-                className="text-white font-bold flex items-center justify-center gap-1.5"
+                className="font-bold flex items-center justify-center gap-1.5"
               >
                 {isTrashed ? (
                   <>
