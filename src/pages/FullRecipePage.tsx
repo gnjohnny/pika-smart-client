@@ -12,10 +12,12 @@ import {
 } from "@/hooks/recipe.hooks";
 import { format } from "date-fns";
 import {
+  ArchiveRestore,
   Camera,
   Clock,
   Clock1,
   Heart,
+  HeartOff,
   Trash2,
   Users,
   UtensilsCrossed,
@@ -74,6 +76,10 @@ const FullRecipePage = () => {
     }
   };
 
+  const handleRemoveFromFavourites = async () => {
+    return;
+  };
+
   const handleTrash = async () => {
     if (!recipe) return;
     trashRecipeReset();
@@ -89,6 +95,10 @@ const FullRecipePage = () => {
         error instanceof Error ? error.message : "Something went wrong";
       toast.error(message);
     }
+  };
+
+  const handleRestoreFromTrash = async () => {
+    return;
   };
 
   return (
@@ -199,49 +209,71 @@ const FullRecipePage = () => {
           </div>
 
           <div className="w-full flex gap-4 justify-end mb-6">
-            <Button
-              className="font-bold bg-orange-400 hover:bg-orange-400/80 cursor-pointer transition duration-200 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center gap-1.5"
-              title="favourite"
-              onClick={handleFavourite}
-              disabled={isFavourited || isFavouritePending || isTrashed}
-            >
-              <LoadingSwap
-                isLoading={isFavouritePending}
-                className="text-white font-bold flex items-center justify-center gap-1.5"
+            {!isFavourited ? (
+              <Button
+                className="font-bold bg-orange-400 hover:bg-orange-400/80 cursor-pointer transition duration-200 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center gap-1.5"
+                title="favourite"
+                onClick={handleFavourite}
+                disabled={isFavourited || isFavouritePending || isTrashed}
               >
-                {!isFavourited ? (
-                  <>
-                    <Heart /> Favorite Recipe
-                  </>
-                ) : (
-                  <>
-                    <Heart className="fill-white" /> Already Favorited
-                  </>
-                )}
-              </LoadingSwap>
-            </Button>
-            <Button
-              className="font-bold cursor-pointer transition duration-200 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center gap-1.5"
-              variant={"outline"}
-              title="trash"
-              onClick={handleTrash}
-              disabled={isTrashed || trashRecipeLoad}
-            >
-              <LoadingSwap
-                isLoading={trashRecipeLoad}
-                className="font-bold flex items-center justify-center gap-1.5"
+                <LoadingSwap
+                  isLoading={isFavouritePending}
+                  className="text-white font-bold flex items-center justify-center gap-1.5"
+                >
+                  <Heart /> Favorite Recipe
+                </LoadingSwap>
+              </Button>
+            ) : (
+              <Button
+                className="font-bold bg-orange-400 hover:bg-orange-400/80 cursor-pointer transition duration-200 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center gap-1.5"
+                title="unfavourite"
+                onClick={handleRemoveFromFavourites}
+                disabled={!isFavourited || isFavouritePending || isTrashed}
               >
-                {isTrashed ? (
-                  <>
-                    <Trash2 className="fill-red-400" /> Trashed
-                  </>
-                ) : (
-                  <>
+                <LoadingSwap
+                  isLoading={isFavouritePending}
+                  className="text-white font-bold flex items-center justify-center gap-1.5"
+                >
+                  <HeartOff /> Remove From Favourites
+                </LoadingSwap>
+              </Button>
+            )}
+
+            {isTrashed ? (
+              <>
+                <Button
+                  className="font-bold cursor-pointer transition duration-200 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center gap-1.5"
+                  variant={"outline"}
+                  title="restore"
+                  onClick={handleRestoreFromTrash}
+                  disabled={!isTrashed || trashRecipeLoad}
+                >
+                  <LoadingSwap
+                    isLoading={trashRecipeLoad}
+                    className="font-bold flex items-center justify-center gap-1.5"
+                  >
+                    <ArchiveRestore /> Restore
+                  </LoadingSwap>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  className="font-bold cursor-pointer transition duration-200 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center gap-1.5"
+                  variant={"outline"}
+                  title="trash"
+                  onClick={handleTrash}
+                  disabled={isTrashed || trashRecipeLoad}
+                >
+                  <LoadingSwap
+                    isLoading={trashRecipeLoad}
+                    className="font-bold flex items-center justify-center gap-1.5"
+                  >
                     <Trash2 className="text-red-400" /> Move To Trash
-                  </>
-                )}
-              </LoadingSwap>
-            </Button>
+                  </LoadingSwap>
+                </Button>
+              </>
+            )}
           </div>
 
           <Separator />
