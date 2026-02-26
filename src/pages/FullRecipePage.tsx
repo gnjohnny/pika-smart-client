@@ -9,6 +9,7 @@ import {
   useGetRecipeDetailedInfo,
   useGetTrashedRecipes,
   useTrashRecipe,
+  useRestoreRecipe,
 } from "@/hooks/recipe.hooks";
 import { format } from "date-fns";
 import {
@@ -58,6 +59,8 @@ const FullRecipePage = () => {
   } = useFavouriteRecipe();
   const { trashRecipeLoad, trashRecipeMutation, trashRecipeReset } =
     useTrashRecipe();
+  const { restoreRecipeLoad, restoreRecipeMutation, restoreRecipeReset } =
+    useRestoreRecipe();
 
   const handleFavourite = async () => {
     if (!recipe) return;
@@ -98,7 +101,20 @@ const FullRecipePage = () => {
   };
 
   const handleRestoreFromTrash = async () => {
-    return;
+    if (!recipe) return;
+    restoreRecipeReset();
+    try {
+      const res = await restoreRecipeMutation(recipe._id);
+      if (res.success) {
+        toast.success(res.message);
+      } else {
+        toast.error(res.message);
+      }
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Something went wrong";
+      toast.error(message);
+    }
   };
 
   return (
@@ -246,10 +262,10 @@ const FullRecipePage = () => {
                   variant={"outline"}
                   title="restore"
                   onClick={handleRestoreFromTrash}
-                  disabled={!isTrashed || trashRecipeLoad}
+                  disabled={restoreRecipeLoad || !isTrashed || trashRecipeLoad}
                 >
                   <LoadingSwap
-                    isLoading={trashRecipeLoad}
+                    isLoading={restoreRecipeLoad}
                     className="font-bold flex items-center justify-center gap-1.5"
                   >
                     <ArchiveRestore /> Restore

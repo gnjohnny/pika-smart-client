@@ -5,6 +5,7 @@ import {
   getMyRecipes,
   getRecipeDetailedInfo,
   getTrashedRecipes,
+  restoreRecipe,
   saveRecipe,
   trashRecipe,
 } from "@/lib/api";
@@ -154,5 +155,25 @@ export const useTrashRecipe = () => {
     trashRecipeLoad: isPending,
     trashRecipeError: error,
     trashRecipeReset: reset,
+  };
+};
+
+export const useRestoreRecipe = () => {
+  const queryClient = useQueryClient();
+  const { mutateAsync, reset, isPending, error } = useMutation({
+    mutationFn: restoreRecipe,
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["recipes"] }),
+        queryClient.invalidateQueries({ queryKey: ["trashed-recipes"] }),
+      ]);
+    },
+  });
+
+  return {
+    restoreRecipeMutation: mutateAsync,
+    restoreRecipeLoad: isPending,
+    restoreRecipeError: error,
+    restoreRecipeReset: reset,
   };
 };
