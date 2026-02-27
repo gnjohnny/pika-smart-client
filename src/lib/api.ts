@@ -210,3 +210,12 @@ export const unFavouriteRecipe = async (id: string) => {
     throw new Error(getErrorMessage(error, "Something went wrong - try again"));
   }
 };
+
+export const clearTrash = async () => {
+  try {
+    const res = await axiosInstance.delete("/recipe/delete");
+    return res.data;
+  } catch (error: unknown) {
+    throw new Error(getErrorMessage(error, "Something went wrong - Try again"));
+  }
+};
