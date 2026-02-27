@@ -10,6 +10,7 @@ import {
   useGetTrashedRecipes,
   useTrashRecipe,
   useRestoreRecipe,
+  useUnFavouriteRecipe,
 } from "@/hooks/recipe.hooks";
 import { format } from "date-fns";
 import {
@@ -61,6 +62,11 @@ const FullRecipePage = () => {
     useTrashRecipe();
   const { restoreRecipeLoad, restoreRecipeMutation, restoreRecipeReset } =
     useRestoreRecipe();
+  const {
+    unFavouriteRecipeMutation,
+    unFavouriteRecipeLoad,
+    unFavouriteRecipeReset,
+  } = useUnFavouriteRecipe();
 
   const handleFavourite = async () => {
     if (!recipe) return;
@@ -80,7 +86,20 @@ const FullRecipePage = () => {
   };
 
   const handleRemoveFromFavourites = async () => {
-    return;
+    if (!recipe) return;
+    unFavouriteRecipeReset();
+    try {
+      const res = await unFavouriteRecipeMutation(recipe._id);
+      if (res.success) {
+        toast.success(res.message);
+      } else {
+        toast.error(res.message);
+      }
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Something went wrong";
+      toast.error(message);
+    }
   };
 
   const handleTrash = async () => {
@@ -244,10 +263,10 @@ const FullRecipePage = () => {
                 className="font-bold bg-orange-400 hover:bg-orange-400/80 cursor-pointer transition duration-200 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center gap-1.5"
                 title="unfavourite"
                 onClick={handleRemoveFromFavourites}
-                disabled={!isFavourited || isFavouritePending || isTrashed}
+                disabled={unFavouriteRecipeLoad || !isFavourited || isTrashed}
               >
                 <LoadingSwap
-                  isLoading={isFavouritePending}
+                  isLoading={unFavouriteRecipeLoad}
                   className="text-white font-bold flex items-center justify-center gap-1.5"
                 >
                   <HeartOff /> Remove From Favourites

@@ -8,6 +8,7 @@ import {
   restoreRecipe,
   saveRecipe,
   trashRecipe,
+  unFavouriteRecipe,
 } from "@/lib/api";
 import {
   useMutation,
@@ -175,5 +176,22 @@ export const useRestoreRecipe = () => {
     restoreRecipeLoad: isPending,
     restoreRecipeError: error,
     restoreRecipeReset: reset,
+  };
+};
+
+export const useUnFavouriteRecipe = () => {
+  const queryClient = useQueryClient();
+  const { reset, mutateAsync, isPending, error } = useMutation({
+    mutationFn: unFavouriteRecipe,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["favourite-recipes"] });
+    },
+  });
+
+  return {
+    unFavouriteRecipeMutation: mutateAsync,
+    unFavouriteRecipeLoad: isPending,
+    unFavouriteRecipeError: error,
+    unFavouriteRecipeReset: reset,
   };
 };

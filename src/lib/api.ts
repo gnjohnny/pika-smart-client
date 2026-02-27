@@ -201,3 +201,12 @@ export const restoreRecipe = async (id: string) => {
     throw new Error(getErrorMessage(error, "Something went wrong - try again"));
   }
 };
+
+export const unFavouriteRecipe = async (id: string) => {
+  try {
+    const res = await axiosInstance.patch(`/recipe/unfavourite/${id}`);
+    return res.data;
+  } catch (error: unknown) {
+    throw new Error(getErrorMessage(error, "Something went wrong - try again"));
+  }
+};
