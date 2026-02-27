@@ -1,4 +1,5 @@
 import {
+  clearTrash,
   favouriteRecipe,
   generateRecipe,
   getFavouritedRecipes,
@@ -193,5 +194,24 @@ export const useUnFavouriteRecipe = () => {
     unFavouriteRecipeLoad: isPending,
     unFavouriteRecipeError: error,
     unFavouriteRecipeReset: reset,
+  };
+};
+
+export const useDeleteRecipe = () => {
+  const queryClient = useQueryClient();
+  const { reset, mutateAsync, isPending, error } = useMutation({
+    mutationFn: clearTrash,
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["recipes"] }),
+        queryClient.invalidateQueries({ queryKey: ["trashed-recipes"] }),
+      ]);
+    },
+  });
+  return {
+    deleteRecipeMutation: mutateAsync,
+    deleteRecipeLoad: isPending,
+    deleteRecipeError: error,
+    deleteRecipeReset: reset,
   };
 };

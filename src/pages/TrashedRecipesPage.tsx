@@ -1,5 +1,5 @@
 import CustomLoader from "@/components/loaders/main-loader";
-import { useGetTrashedRecipes } from "@/hooks/recipe.hooks";
+import { useDeleteRecipe, useGetTrashedRecipes } from "@/hooks/recipe.hooks";
 import { Link } from "react-router";
 import { RecipeCard } from "@/components/recipe/recipe-card";
 import { EmptyState } from "@/components/empty-state";
@@ -15,19 +15,33 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import CustomTrashSvg from "@/components/loaders/trashing-recipes-loader";
+import { toast } from "sonner";
 
 const TrashedRecipesPage = () => {
   const { trashedRecipes, isPending } = useGetTrashedRecipes();
   const recipes = trashedRecipes?.trashed_recipes ?? [];
 
-  const isLoading = false; // Placeholder for loading state when clearing trash
+  const { deleteRecipeMutation, deleteRecipeReset, deleteRecipeLoad } =
+    useDeleteRecipe();
 
   const handleClearTrash = async () => {
-    return;
+    deleteRecipeReset();
+    try {
+      const res = await deleteRecipeMutation();
+      if (res.success) {
+        toast.success(res.message);
+      } else {
+        toast.error(res.message);
+      }
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Something went wrong";
+      toast.error(message);
+    }
   };
   return (
     <>
-      {isLoading ? (
+      {deleteRecipeLoad ? (
         <div className="w-full h-[80vh] flex flex-col justify-center items-center gap-2">
           <CustomTrashSvg className={"text-orange-400 size-20"} />
           <p className="text-sm text-primary/70 animate-pulse">
