@@ -76,7 +76,7 @@ const TrashedRecipesPage = () => {
                     <DialogTitle>Are you absolutely sure?</DialogTitle>
                     <DialogDescription>
                       This action cannot be undone. This will permanently delete
-                      your recipes and remove then from our servers.
+                      your recipes and remove them from our servers.
                     </DialogDescription>
                   </DialogHeader>
                   <DialogClose asChild>
