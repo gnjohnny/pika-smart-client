@@ -16,6 +16,7 @@ import FavouriteRecipesPage from "./pages/FavouriteRecipesPage";
 import TrashedRecipesPage from "./pages/TrashedRecipesPage";
 import SettingsPage from "./pages/SettingsPage";
 import FullRecipePage from "./pages/FullRecipePage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 const App = () => {
   const { authUser, isPending } = useAuth();
@@ -41,6 +42,7 @@ const App = () => {
           )
         }
       />
+      <Route path="*" element={<NotFoundPage />} />
       <Route
         path="/sign-in"
         element={

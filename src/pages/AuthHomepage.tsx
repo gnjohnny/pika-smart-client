@@ -8,40 +8,10 @@ import {
   Timer,
   UsersRound,
   Utensils,
-  type LucideIcon,
 } from "lucide-react";
 import { Link } from "react-router";
 
 const AuthHomepage = () => {
-  type StepsType = {
-    name: string;
-    icon: LucideIcon;
-    description: string;
-  };
-
-  type AboutBannersType = {
-    title: string;
-    desc: string;
-  };
-
-  type RecipeType = {
-    title: string;
-    description: string;
-    ingredients: {
-      name: string;
-      quantity: number;
-      unit: string;
-    }[];
-    cook_time: number;
-    servings: number;
-  };
-
-  type WhyPikaSmartTypes = {
-    title: string;
-    desc: string;
-    icon: LucideIcon;
-  };
-
   const steps: StepsType[] = [
     {
       name: "Input Ingredients",
@@ -176,7 +146,7 @@ const AuthHomepage = () => {
             variant={"outline"}
             className="w-3/4 md:w-1/2 border border-orange-500 text-primary shadow-lg shadow-orange-500/30 cursor-pointer"
           >
-            <Link to="/sign-in">Generate Recipe</Link>
+            <Link to="/dashboard/create">Generate Recipe</Link>
           </Button>
         </div>
       </section>
@@ -357,9 +327,11 @@ const AuthHomepage = () => {
             to start, delicious forever.
           </p>
           <div className="w-3/4 mx-auto flex flex-row justify-center items-center gap-4">
-            <Button className="w-1/2 bg-orange-500 hover:bg-orange-600 text-primary font-bold transition-all shadow-lg shadow-orange-500/25 cursor-pointer">
-              Start Generating Free
-            </Button>
+            <Link to="/dashboard/create" className="w-1/2">
+              <Button className="w-full bg-orange-500 hover:bg-orange-600 text-primary font-bold transition-all shadow-lg shadow-orange-500/25 cursor-pointer">
+                Start Generating Free
+              </Button>
+            </Link>
             <Button
               variant="outline"
               className="w-1/2 text-primary font-bold backdrop-blur-sm transition-all border border-orange-400 cursor-pointer"

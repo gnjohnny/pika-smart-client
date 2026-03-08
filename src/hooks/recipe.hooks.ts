@@ -2,6 +2,7 @@ import {
   clearTrash,
   favouriteRecipe,
   generateRecipe,
+  getAllRecipes,
   getFavouritedRecipes,
   getMyRecipes,
   getRecipeDetailedInfo,
@@ -16,6 +17,7 @@ import {
   useQuery,
   useQueryClient,
   keepPreviousData,
+  useInfiniteQuery,
 } from "@tanstack/react-query";
 
 export const useGetRecipeDetailedInfo = ({ id }: { id: string }) => {
@@ -30,6 +32,34 @@ export const useGetRecipeDetailedInfo = ({ id }: { id: string }) => {
     detailedInfo: data,
     isPending,
     error,
+  };
+};
+
+export const useGetAllRecipes = ({
+  title,
+  sortby,
+  limit = 10,
+}: RecipeQuery) => {
+  const { data, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useInfiniteQuery({
+      queryKey: ["all_recipes", { title, sortby, limit }],
+      queryFn: ({ pageParam = 1 }) =>
+        getAllRecipes([
+          "all_recipes",
+          { title, sortby, page: pageParam as number, limit: 3 },
+        ]),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) =>
+        lastPage.currentPage < lastPage.totalPages
+          ? lastPage.currentPage + 1
+          : undefined,
+    });
+
+  return {
+    data,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
   };
 };
 
