@@ -83,7 +83,7 @@ export const resetPassword = async (data: {
 };
 
 export const getAllRecipes = async (queryKey: [string, RecipeQuery]) => {
-  const [_key, { title, sortby, page = 1, limit = 10 }] = queryKey;
+  const [_key, { title, sortby, page = 1, limit = 3 }] = queryKey;
   try {
     const res = await axiosInstance.get("/recipe/all-recipes", {
       params: { title, sortby, page, limit },
