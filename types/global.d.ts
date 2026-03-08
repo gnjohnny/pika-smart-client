@@ -11,6 +11,34 @@ import type { z } from "zod";
 export {};
 
 declare global {
+  type StepsType = {
+    name: string;
+    icon: LucideIcon;
+    description: string;
+  };
+
+  type AboutBannersType = {
+    title: string;
+    desc: string;
+  };
+
+  type RecipeType = {
+    title: string;
+    description: string;
+    ingredients: {
+      name: string;
+      quantity: number;
+      unit: string;
+    }[];
+    cook_time: number;
+    servings: number;
+  };
+
+  type WhyPikaSmartTypes = {
+    title: string;
+    desc: string;
+    icon: LucideIcon;
+  };
   type FormFieldInputProps<
     TFieldValues extends FieldValues = FieldValues,
     TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
