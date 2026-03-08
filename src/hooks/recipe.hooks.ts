@@ -46,7 +46,7 @@ export const useGetAllRecipes = ({
       queryFn: ({ pageParam = 1 }) =>
         getAllRecipes([
           "all_recipes",
-          { title, sortby, page: pageParam as number, limit: 3 },
+          { title, sortby, page: pageParam as number, limit },
         ]),
       initialPageParam: 1,
       getNextPageParam: (lastPage) =>
