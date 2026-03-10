@@ -1,5 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { LoadingSwap } from "@/components/ui/loading-swap";
+import { useGetAllRecipes } from "@/hooks/recipe.hooks";
 import {
   CookingPot,
   Heart,
@@ -51,51 +53,6 @@ const AuthHomepage = () => {
     },
   ];
 
-  const recipesMockData: RecipeType[] = [
-    {
-      title: "Spicy Ugali with Sukuma Wiki",
-      description:
-        "A traditional Kenyan dish made with maize flour and served with sautéed kale.",
-      ingredients: [
-        {
-          name: "Maize Flour",
-          quantity: 2,
-          unit: "cups",
-        },
-      ],
-      cook_time: 30,
-      servings: 4,
-    },
-    {
-      title: "Chicken Pilau",
-      description:
-        "A flavorful rice dish cooked with spices and tender chicken pieces.",
-      ingredients: [
-        {
-          name: "Rice",
-          quantity: 1.5,
-          unit: "cups",
-        },
-      ],
-      cook_time: 45,
-      servings: 4,
-    },
-    {
-      title: "Mashed Potato with Grilled Fish",
-      description:
-        "Creamy mashed potatoes served alongside perfectly grilled fish fillets.",
-      ingredients: [
-        {
-          name: "Potatoes",
-          quantity: 3,
-          unit: "pieces",
-        },
-      ],
-      cook_time: 45,
-      servings: 4,
-    },
-  ];
-
   const whyPikaSmart: WhyPikaSmartTypes[] = [
     {
       title: "AI-Powered Creativity",
@@ -113,6 +70,16 @@ const AuthHomepage = () => {
       icon: Heart,
     },
   ];
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useGetAllRecipes({
+      title: "",
+      sortby: "newest",
+      limit: 3,
+    });
+
+  const recipes = data?.pages.flatMap((page) => page.recipes) || [];
+
   return (
     <main className="w-full mt-15 flex justify-center items-center flex-col gap-20 pb-20">
       <section
@@ -204,7 +171,7 @@ const AuthHomepage = () => {
         </div>
 
         <div className="max-w-7xl mx-auto place-content-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {recipesMockData.map((recipe, index) => (
+          {recipes.map((recipe, index) => (
             <div
               key={index}
               className=" flex flex-col gap-4 p-4 bg-orange-200/10 backdrop-blur-sm rounded-xl border border-orange-300/40 shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
@@ -227,14 +194,24 @@ const AuthHomepage = () => {
                 </p>
 
                 <div className="w-full flex flex-wrap justify-start items-center my-4">
-                  {recipe.ingredients.map((ingredient, idx) => (
-                    <Badge
-                      key={idx}
-                      className="text-sm text-muted-foreground border border-orange-400/50 bg-orange-200/30 mr-2 mb-2"
-                    >
-                      {ingredient.quantity} {ingredient.unit} {ingredient.name}
-                    </Badge>
-                  ))}
+                  {recipe.ingredients.slice(0, 4).map(
+                    (
+                      ingredient: {
+                        quantity: number;
+                        unit: string;
+                        name: string;
+                      },
+                      idx: number,
+                    ) => (
+                      <Badge
+                        key={idx}
+                        className="text-sm text-muted-foreground border border-orange-400/50 bg-orange-200/30 mr-2 mb-2"
+                      >
+                        {ingredient.quantity} {ingredient.unit}{" "}
+                        {ingredient.name}
+                      </Badge>
+                    ),
+                  )}
                 </div>
 
                 <div className="w-full flex justify-start items-center gap-4">
@@ -250,6 +227,23 @@ const AuthHomepage = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="w-full flex justify-center items-center mt-8">
+          {hasNextPage && (
+            <Button
+              onClick={() => fetchNextPage()}
+              disabled={!hasNextPage || isFetchingNextPage}
+              className="w-full bg-orange-600 hover:bg-orange-600/80 transition-colors duration-300 cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <LoadingSwap
+                isLoading={isFetchingNextPage}
+                className="text-white font-bold"
+              >
+                Load More
+              </LoadingSwap>
+            </Button>
+          )}
         </div>
       </section>
       <section className="max-w-6xl max-h-fit mx-auto flex flex-col" id="about">
