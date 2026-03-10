@@ -84,7 +84,7 @@ declare global {
     generated_by_AI: boolean;
     ingredients: Array<{
       name: string;
-      quantity: string;
+      quantity: number;
       unit: string;
     }>;
     instructions: Array<string>;

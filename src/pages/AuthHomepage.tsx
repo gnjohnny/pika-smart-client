@@ -173,7 +173,7 @@ const AuthHomepage = () => {
         <div className="max-w-7xl mx-auto place-content-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {recipes.map((recipe, index) => (
             <div
-              key={index}
+              key={recipe._id || index}
               className=" flex flex-col gap-4 p-4 bg-orange-200/10 backdrop-blur-sm rounded-xl border border-orange-300/40 shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
             >
               <div className="group overflow-hidden w-full h-38 rounded-t-xl">
